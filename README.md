@@ -89,6 +89,13 @@
     <p>Adresse : Nord-Ouest, Haïti</p>
   </section>
 
+<form name="contact" method="POST" data-netlify="true">
+  <input type="text" name="nom" placeholder="Votre nom" required>
+  <input type="email" name="email" placeholder="Votre email" required>
+  <textarea name="message" placeholder="Votre message" required></textarea>
+  <button type="submit">Envoyer</button>
+</form>
+
   <footer>
     <p>&copy; 2025 Fondation Backup Spirituel. Tous droits réservés.</p>
   </footer>
