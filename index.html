@@ -6,33 +6,21 @@
   <title>Fondation Backup Spirituel</title>
   <link rel="stylesheet" href="style.css">
   <style>
-  nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex; /* mete tout meni yo sou yon sèl liy */
-    justify-content: center; /* mete yo nan mitan */
-    gap: 20px; /* espas ant chak meni */
-  }
+    /* STYLE POU HEADER & NAV */
+    header {
+      background-color: #003366; /* ble fonse */
+      padding: 20px 0;
+      color: white;
+      text-align: center;
+    }
 
-  nav ul li {
-    display: inline;
-  }
-
-  nav ul li a {
-    text-decoration: none;
-    color: inherit;
-    font-weight: bold;
-  }
-<!-- STYLE ENTÈN (kòrèkteman fèmen) -->
-  <style>
     nav ul {
       list-style: none;
       padding: 0;
       margin: 0;
-      display: flex; /* mete tout meni yo sou yon sèl liy */
-      justify-content: center; /* mete yo nan mitan */
-      gap: 20px; /* espas ant chak meni */
+      display: flex;
+      justify-content: center;
+      gap: 20px;
     }
 
     nav ul li {
@@ -40,11 +28,106 @@
     }
 
     nav ul li a {
-  color: blue;
-  text-decoration: none;
-  font-weight: bold;
-}
-  </style> <!-- Fèmen sa w te bliye a -->
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #ffcc00; /* efè sou hover: jòn limyè */
+    }
+
+    /* SEKSYON YO */
+    section {
+      padding: 40px 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .hero {
+      background-color: #f2f2f2;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .galerie {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .galerie img {
+      width: 200px;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .don-btn {
+      display: inline-block;
+      background-color: #003366;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .don-btn:hover {
+      background-color: #0055aa;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 500px;
+      margin: 20px auto;
+    }
+
+    input, textarea {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button[type="submit"] {
+      background-color: #003366;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #0055aa;
+    }
+
+    footer {
+      background-color: #003366;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: 40px;
+    }
+
+    .retour-haut {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #003366;
+      color: white;
+      padding: 10px;
+      border-radius: 50%;
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    .retour-haut:hover {
+      background-color: #0055aa;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -67,19 +150,18 @@
     <p>La Fondation Backup Spirituel s'engage pour le changement social, la paix et la justice en Haïti.</p>
   </section>
 
- <section id="apropos">
-  <h2>À propos de la Fondation</h2>
-  <p>La Fondation Backup Spirituel est une organisation à but non lucratif qui lutte pour les droits humains, l’éducation et le soutien communautaire, en particulier pour les femmes et les enfants dans le Nord-Ouest d'Haïti.</p>
+  <section id="apropos">
+    <h2>À propos de la Fondation</h2>
+    <p>La Fondation Backup Spirituel est une organisation à but non lucratif qui lutte pour les droits humains, l’éducation et le soutien communautaire, en particulier pour les femmes et les enfants dans le Nord-Ouest d'Haïti.</p>
 
-  <p>La Fondation Backup Spirituel est une organisation à but non lucratif qui est affiliée aux églises Catholiques, dédiée à l'amélioration de la vie des enfants défavorisés en Haïti. Fondée par Entrepreneur du Changement Social M. MEME Selvandieu, Mme. MOISE Ranise, et Mme. Shirley depuis USA, cette Fondation s'efforce de fournir un soutien essentiel aux enfants qui font face à des défis socio-économiques dans le pays.</p>
+    <p>La Fondation Backup Spirituel est affiliée aux églises Catholiques, dédiée à l'amélioration de la vie des enfants défavorisés. Fondée par M. MEME Selvandieu, Mme MOISE Ranise, et Mme Shirley (USA), elle fournit un soutien essentiel aux enfants en difficulté.</p>
 
-  <p>Les principales missions de la Fondation Backup Spirituel incluent l'accès à l'éducation, aux fournitures scolaires, à l'assainissement, à la nourriture, ainsi qu'à des programmes de développement personnel. Elle vise à créer un environnement où ces enfants peuvent grandir en toute sécurité, s'épanouir et réaliser leur potentiel.</p>
+    <p>Ses missions incluent l'accès à l'éducation, à l'assainissement, à la nourriture, et au développement personnel. Elle veut créer un environnement sécuritaire pour que les enfants grandissent et s’épanouissent.</p>
 
-  <p>La fondation repose sur des partenariats locaux et internationaux, ainsi que sur des parrainages individuels, pour financer ses activités et soutenir ces jeunes dans leur cheminement vers un avenir meilleur. Elle croit fermement en l'importance de l'éducation, de la santé et du bien-être des enfants pour contribuer au développement durable d'Haïti.</p>
+    <p>Elle s'appuie sur des partenariats locaux et internationaux, et des parrainages pour financer ses actions. Elle croit en l’éducation, la santé et le bien-être des enfants pour le développement durable d'Haïti.</p>
 
-  <p>En travaillant en étroite collaboration avec les communautés locales et d'autres organisations caritatives, la Fondation Backup Spirituel s'efforce de faire une différence significative dans la vie des enfants haïtiens, tout en promouvant des valeurs de solidarité et d'espoir.</p>
-</section>
-
+    <p>La Fondation agit avec les communautés locales et d'autres ONG pour faire une réelle différence dans la vie des enfants haïtiens, tout en promouvant solidarité et espoir.</p>
+  </section>
 
   <section id="actions">
     <h2>Nos actions</h2>
@@ -121,13 +203,13 @@
     <p>Adresse : Nord-Ouest, Haïti</p>
   </section>
 
-<form name="contact" method="POST" data-netlify="true">
-  <input type="text" name="nom" placeholder="Votre nom" required>
-  <input type="email" name="email" placeholder="Votre email" required>
-  <textarea name="message" placeholder="Votre message" required></textarea>
-  <button type="submit">Envoyer</button>
-</form>
-  
+  <form name="contact" method="POST" data-netlify="true">
+    <input type="text" name="nom" placeholder="Votre nom" required>
+    <input type="email" name="email" placeholder="Votre email" required>
+    <textarea name="message" placeholder="Votre message" required></textarea>
+    <button type="submit">Envoyer</button>
+  </form>
+
   <footer>
     <p>&copy; 2025 Fondation Backup Spirituel. Tous droits réservés.</p>
   </footer>
