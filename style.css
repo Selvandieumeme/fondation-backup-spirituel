@@ -69,3 +69,21 @@ footer {
   object-position: top center;
   display: block;
 }
+
+<style>
+  .don-btn {
+    display: inline-block;
+    background-color: #007BFF;
+    color: white;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .don-btn:hover {
+    background-color: #0056b3;
+  }
+</style>
