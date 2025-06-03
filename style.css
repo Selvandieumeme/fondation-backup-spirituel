@@ -19,3 +19,17 @@
       font-weight: bold;
     }
   </style> <!-- Fèmen sa w te bliye a -->
+header {
+  background-color: #0033cc; /* ble fonse */
+  color: white;              /* tèks yo blan */
+  padding: 20px;
+  text-align: center;
+}
+
+footer {
+  background-color: #0033cc; /* menm koulè ak header */
+  color: white;
+  padding: 15px;
+  text-align: center;
+  margin-top: 40px;
+}
