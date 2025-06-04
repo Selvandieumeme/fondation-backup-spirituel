@@ -313,5 +313,32 @@
   </footer>
 
   <a href="#accueil" class="retour-haut">↑ Haut</a>
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  emailjs.init("VOTRE_USER_ID"); // ranplase pa ID ou sou EmailJS
+
+  function sendChatMessage() {
+    const result = document.getElementById('chat-result');
+    result.innerHTML = "⏳ Envoi du message...";
+
+    emailjs.send("VOTRE_SERVICE_ID", "VOTRE_TEMPLATE_ID", {
+      user_name: document.getElementById("chat-name").value,
+      user_email: document.getElementById("chat-email").value,
+      message: document.getElementById("chat-message").value,
+    })
+    .then(() => {
+      result.innerHTML = "✅ Message envoyé avec succès. Merci !";
+      document.getElementById("chat-form").reset();
+    }, (error) => {
+      console.error(error);
+      result.innerHTML = "❌ Erreur lors de l'envoi. Veuillez réessayer.";
+    });
+
+    return false; // anpeche reload paj
+  }
+</script>
+  
 </body>
 </html>
