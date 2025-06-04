@@ -87,3 +87,24 @@ footer {
     background-color: #0056b3;
   }
 </style>
+
+<style>
+  .ecouter-btn {
+    display: inline-block;
+    background-color: #007BFF;
+    color: #fff;
+    font-size: 1.2em;
+    padding: 14px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .ecouter-btn:hover {
+    background-color: #0056b3;
+  }
+</style>
+
+
