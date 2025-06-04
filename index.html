@@ -278,17 +278,31 @@
   </p>
 
   <hr style="border: 0; border-top: 4px double #007BFF; margin: 40px auto; width: 60%;">
+<!-- Section Contactez-nous -->
+<section id="contact" style="background-color: #fff9f0; padding: 40px 20px; text-align: center;">
+  <h2 style="font-size: 2em; color: #cc6600; margin-bottom: 10px;">Contactez-nous</h2>
+  <p style="font-size: 1.1em; color: #444; margin-bottom: 20px;">
+    Une question ? Une suggestion ? Tchattez en direct avec le fondateur de la Fondation Backup Spirituel.
+  </p>
 
   <form id="chat-form" style="max-width: 500px; margin: 0 auto;" onsubmit="return sendChatMessage();">
     <input type="text" id="chat-name" name="user_name" placeholder="Votre nom" required
       style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;" />
+      
     <input type="email" id="chat-email" name="user_email" placeholder="Votre e-mail" required
       style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;" />
+      
     <textarea id="chat-message" name="message" rows="5" placeholder="Écrivez votre message ici..." required
       style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;"></textarea>
 
     <button type="submit"
-      style="background-color: #007BFF; color: white; font-size: 1.1em
+      style="background-color: #007BFF; color: white; font-size: 1.1em; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer;">
+      📩 Envoyer le message
+    </button>
+
+    <p id="chat-result" style="margin-top: 15px; font-weight: bold;"></p>
+  </form>
+</section>
 
 <hr style="border: 0; border-top: 4px double #007BFF; margin: 40px auto; width: 60%;">
 
