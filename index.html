@@ -134,33 +134,6 @@
   <span onclick="document.getElementById('chat-form').style.display='none'"
   style="position: absolute; top: 10px; right: 15px; font-weight: bold; font-size: 18px; cursor: pointer;">×</span>
 
-  <!-- Fòmilè tchat ki parèt sou bouton -->
-<div id="chat-form" style="
-  display: none;
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
-  width: 320px;
-  z-index: 9999;
-">
-  <form action="https://formspree.io/f/mnqedygq" method="POST">
-    <label for="name">Nom :</label>
-    <input type="text" name="name" id="name" required style="width: 100%; padding: 8px; margin-top: 6px; margin-bottom: 10px;">
-
-    <label for="email">Email :</label>
-    <input type="email" name="email" id="email" required style="width: 100%; padding: 8px; margin-top: 6px; margin-bottom: 10px;">
-
-    <label for="message">Message :</label>
-    <textarea name="message" id="message" rows="4" required style="width: 100%; padding: 8px;"></textarea>
-
-    <button type="submit" style="margin-top: 10px; background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Envoyer</button>
-  </form>
-</div>
-
   
   <!-- HEADER LA -->
 <header>
@@ -236,9 +209,9 @@
   <section id="actualites">
     <h2>Actualités / Événements</h2>
     <ul>
-      <li>📅 5 juin 2025 : Séminaire sur la cybersécurité à Mare Rouge</li>
-      <li>📢 Lancement du programme de soutien aux femmes rurales</li>
-      <li>🎉 Partenariat avec ONG Search for Common Ground</li>
+      <li>📅 Samedi 14 juin 2025 : Jeune Emission Backup Spirituel, Radio Firmament FM 88.1 à Mare Rouge</li>
+      <li>📢 Lancement du programme de soutien en Cyber Securite Informatique.</li>
+      <li>🎉 Partenariat avec des ONGs Internationales</li>
     </ul>
   </section>
 
@@ -424,13 +397,13 @@
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
   (function(){
-    emailjs.init("VOTRE_PUBLIC_KEY"); // Ranplase sa ak Public Key ou
+    emailjs.init("fs352qkS3t3SEkORh"); // Ranplase sa ak Public Key ou
   })();
 
   document.getElementById('chat-form').addEventListener('submit', function(event) {
     event.preventDefault();
     
-    emailjs.sendForm('VOTRE_SERVICE_ID', 'VOTRE_TEMPLATE_ID', this)
+    emailjs.sendForm('service_z0ju6cu', 'template_wv26nve', this)
       .then(function() {
         document.getElementById('chat-response').innerText = "Message envoyé avec succès !";
         document.getElementById('chat-form').reset();
