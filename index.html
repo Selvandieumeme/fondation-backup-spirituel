@@ -397,13 +397,13 @@
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
   (function(){
-    emailjs.init("fs352qkS3t3SEkORh"); // Ranplase sa ak Public Key ou
+    emailjs.init("wi_D-9X91NH92eFD-"); // Ranplase sa ak Public Key ou
   })();
 
   document.getElementById('chat-form').addEventListener('submit', function(event) {
     event.preventDefault();
     
-    emailjs.sendForm('service_z0ju6cu', 'template_wv26nve', this)
+    emailjs.sendForm('service_f2ely0c', 'template_z31lznu', this)
       .then(function() {
         document.getElementById('chat-response').innerText = "Message envoyé avec succès !";
         document.getElementById('chat-form').reset();
