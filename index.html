@@ -325,32 +325,6 @@
 
   <a href="#accueil" class="retour-haut">↑ Haut</a>
 
-<!-- EmailJS SDK -->
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-  emailjs.init("wi_D-9X91NH92eFD-"); // ranplase pa ID ou sou EmailJS
-
-  function sendChatMessage() {
-    const result = document.getElementById('chat-result');
-    result.innerHTML = "⏳ Envoi du message...";
-
-    emailjs.send("service_f2ely0c", "template_z31lznu", {
-      user_name: document.getElementById("chat-name").value,
-      user_email: document.getElementById("chat-email").value,
-      message: document.getElementById("chat-message").value,
-    })
-    .then(() => {
-      result.innerHTML = "✅ Message envoyé avec succès. Merci !";
-      document.getElementById("chat-form").reset();
-    }, (error) => {
-      console.error(error);
-      result.innerHTML = "❌ Erreur lors de l'envoi. Veuillez réessayer.";
-    });
-
-    return false; // anpeche reload paj
-  }
-</script>
-
 <!-- SECTION CHAT EN DIRECT -->
 <section id="chat-direct" style="position: fixed; bottom: 20px; right: 20px; z-index: 999;">
   <button onclick="toggleChat()" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold;">
@@ -368,56 +342,32 @@
   </div>
 </section>
 
-<!-- EMAILJS + SCRIPT -->
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-  (function() {
-    emailjs.init("wi_D-9X91NH92eFD-"); // Public Key ou
-  })();
-
-  document.getElementById('chat-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    emailjs.sendForm('service_f2ely0c', 'template_z31lznu', this)
-      .then(function() (
-        document.getElementById('chat-response').innerText = "✅ Message envoyé avec succès !";
-        document.getElementById('chat-form').reset();
-      }, function(error) {
-        document.getElementById('chat-response').innerText = "❌ Erreur lors de l'envoi du message.";
-        console.log(error);
-      });
-  });
-
-  function toggleChat() {
-    var chatBox = document.getElementById('chatBox');
-    chatBox.style.display = (chatBox.style.display === "none") ? "block" : "none";
-  }
-</script>
-
+<!-- EmailJS SDK (1 sèl fwa) -->
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
   (function(){
-    emailjs.init("wi_D-9X91NH92eFD-"); // Ranplase sa ak Public Key ou
+    emailjs.init("wi_D-9X91NH92eFD-"); // Se User ID ou sou EmailJS
   })();
-
-  document.getElementById('chat-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    emailjs.sendForm('service_f2ely0c', 'template_z31lznu', this)
-      .then(function() {
-        document.getElementById('chat-response').innerText = "Message envoyé avec succès !";
-        document.getElementById('chat-form').reset();
-      }, function(error) {
-        document.getElementById('chat-response').innerText = "Erreur lors de l'envoi.";
-        console.log(error);
-      });
-  });
 
   function toggleChat() {
     var chatBox = document.getElementById('chatBox');
     chatBox.style.display = (chatBox.style.display === "none") ? "block" : "none";
   }
-</script>
+
+  // Kòd pou voye fòm lan
+  document.getElementById('chat-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    emailjs.sendForm('service_f2ely0c', 'template_z31lznu', this)
+      .then(function() {
+        document.getElementById('chat-response').innerText = "✅ Message envoyé avec succès !";
+        document.getElementById('chat-form').reset();
+      }, function(error) {
+        document.getElementById('chat-response').innerText = "❌ Erreur lors de l'envoi.";
+        console.log(error);
+      });
+  });
+</script> 
   
 </body>
 </html>
