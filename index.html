@@ -328,13 +328,13 @@
 <!-- EmailJS SDK -->
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
-  emailjs.init("VOTRE_USER_ID"); // ranplase pa ID ou sou EmailJS
+  emailjs.init("wi_D-9X91NH92eFD-"); // ranplase pa ID ou sou EmailJS
 
   function sendChatMessage() {
     const result = document.getElementById('chat-result');
     result.innerHTML = "⏳ Envoi du message...";
 
-    emailjs.send("VOTRE_SERVICE_ID", "VOTRE_TEMPLATE_ID", {
+    emailjs.send("service_f2ely0c", "template_z31lznu", {
       user_name: document.getElementById("chat-name").value,
       user_email: document.getElementById("chat-email").value,
       message: document.getElementById("chat-message").value,
@@ -372,14 +372,14 @@
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
   (function() {
-    emailjs.init("fs352qkS3t3SEkORh"); // Public Key ou
+    emailjs.init("wi_D-9X91NH92eFD-"); // Public Key ou
   })();
 
   document.getElementById('chat-form').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    emailjs.sendForm('service_z0ju6cu', 'template_wv26nve', this)
-      .then(function() {
+    emailjs.sendForm('service_f2ely0c', 'template_z31lznu', this)
+      .then(function() (
         document.getElementById('chat-response').innerText = "✅ Message envoyé avec succès !";
         document.getElementById('chat-form').reset();
       }, function(error) {
