@@ -420,6 +420,31 @@
     chatBox.style.display = (chatBox.style.display === "none") ? "block" : "none";
   }
 </script>
+
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  (function(){
+    emailjs.init("VOTRE_PUBLIC_KEY"); // Ranplase sa ak Public Key ou
+  })();
+
+  document.getElementById('chat-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    emailjs.sendForm('VOTRE_SERVICE_ID', 'VOTRE_TEMPLATE_ID', this)
+      .then(function() {
+        document.getElementById('chat-response').innerText = "Message envoyé avec succès !";
+        document.getElementById('chat-form').reset();
+      }, function(error) {
+        document.getElementById('chat-response').innerText = "Erreur lors de l'envoi.";
+        console.log(error);
+      });
+  });
+
+  function toggleChat() {
+    var chatBox = document.getElementById('chatBox');
+    chatBox.style.display = (chatBox.style.display === "none") ? "block" : "none";
+  }
+</script>
   
 </body>
 </html>
