@@ -107,32 +107,5 @@ footer {
   }
 </style>
 
-<style>
-  #cursor-text {
-    position: fixed;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%);
-    font-size: 16px;
-    font-weight: bold;
-    color: #ffffff;
-    background: #1e90ff;
-    padding: 6px 14px;
-    border-radius: 5px;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0;
-    transition: transform 0.1s ease-out, opacity 0.3s;
-    white-space: nowrap;
-  }
 
-  body:hover #cursor-text {
-    opacity: 1;
-  }
-
-  /* Si ou vle ranplase souri a nèt: */
-  body {
-    cursor: none;
-  }
-</style>
 
