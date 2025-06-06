@@ -132,7 +132,7 @@
 <body>
 
   <!-- Animation Bienvenue -->
-<div id="floating-msg">BIENVENUE SUR LE SITE WEB DE LA FONDATION</div>
+<div id="cursor-text">BIENVENUE SUR LE SITE WEB DE LA FONDATION</div>
   
 
   <span onclick="document.getElementById('chat-form').style.display='none'"
@@ -374,19 +374,14 @@
 </script> 
 
 <script>
-  const msg = document.getElementById("floating-msg");
+  const cursorText = document.getElementById("cursor-text");
 
-  document.body.addEventListener("mousemove", () => {
-    // Si mesaj la pa deja parèt
-    if (msg.style.display !== "block") {
-      msg.style.display = "block";
-      msg.style.animation = "floatAndFade 3s ease-in-out";
+  document.addEventListener("mousemove", (e) => {
+    const x = e.clientX;
+    const y = e.clientY;
 
-      // Disparèt li apre 3s
-      setTimeout(() => {
-        msg.style.display = "none";
-      }, 3000);
-    }
+    cursorText.style.left = x + "px";
+    cursorText.style.top = y + "px";
   });
 </script>
 
