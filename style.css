@@ -107,4 +107,27 @@ footer {
   }
 </style>
 
+<style>
+  #floating-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #007BFF;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 9999;
+    animation: floatUpDown 3s infinite ease-in-out;
+    display: none; /* pa montre depi nan kòmansman */
+  }
 
+  @keyframes floatUpDown {
+    0% { transform: translate(-50%, -50%) translateY(0); }
+    50% { transform: translate(-50%, -50%) translateY(-20px); }
+    100% { transform: translate(-50%, -50%) translateY(0); }
+  }
+</style>
