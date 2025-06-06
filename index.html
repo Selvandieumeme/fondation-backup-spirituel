@@ -1,30 +1,373 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Fondation Backup Spirituel</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FONDATION BACKUP SPIRITUEL</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* STYLE POU HEADER & NAV */
+    header {
+      background-color: #003366; /* ble fonse */
+      padding: 20px 0;
+      color: white;
+      text-align: center;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    nav ul li {
+      display: inline;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #ffcc00; /* efè sou hover: jòn limyè */
+    }
+
+    /* SEKSYON YO */
+    section {
+      padding: 40px 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .hero {
+      background-color: #f2f2f2;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .galerie {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .galerie img {
+      width: 200px;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .don-btn {
+      display: inline-block;
+      background-color: #003366;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .don-btn:hover {
+      background-color: #0055aa;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 500px;
+      margin: 20px auto;
+    }
+
+    input, textarea {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button[type="submit"] {
+      background-color: #003366;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #0055aa;
+    }
+
+    footer {
+      background-color: #003366;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: 40px;
+    }
+
+    .retour-haut {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #003366;
+      color: white;
+      padding: 10px;
+      border-radius: 50%;
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    .retour-haut:hover {
+      background-color: #0055aa;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Bienvenue sur le site officiel de la Fondation Backup Spirituel</h1>
-    </header>
-    <section>
-        <p>La Fondation Backup Spirituel lutte contre les abus faits aux femmes et aux enfants en Haïti, notamment dans le Département du Nord-Ouest.</p>
-        <img src="img/fondation.jpg" alt="Image représentant la fondation">
-    </section>
-    <section>
-        <h2>Nos objectifs</h2>
-        <ul>
-            <li>Lutter contre la violence basée sur le genre.</li>
-            <li>Éduquer et sensibiliser la population.</li>
-            <li>Former des jeunes dans le domaine de la cybersécurité et du piratage éthique.</li>
-        </ul>
-    </section>
-    <footer>
-        <p>Contactez-nous à fondationbackupspirituel@gmail.com</p>
-    </footer>
+
+  <span onclick="document.getElementById('chat-form').style.display='none'"
+  style="position: absolute; top: 10px; right: 15px; font-weight: bold; font-size: 18px; cursor: pointer;">×</span>
+
+  
+  <!-- HEADER LA -->
+<header>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+    <img src="logofobas.png" style="height: 80px;">
+    <h1 style="margin: 0; color: white;">FONDATION BACKUP SPIRITUEL</h1>
+  </div>
+
+  <nav>
+    <ul>
+      <li><a href="#accueil">Accueil</a></li>
+      <li><a href="#apropos">À propos</a></li>
+      <li><a href="#actions">Nos actions</a></li>
+      <li><a href="#galerie">Galerie</a></li>
+      <li><a href="#actualites">Actualités</a></li>
+      <li><a href="#soutenir">Nous soutenir</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+  <!-- Seksion foto timoun yo -->
+<section style="background-color: #003366; margin: 0; padding: 0;">
+  <img src="enfantsfobas.jpg"
+       alt="Timoun Fondation"
+       style="width: 100vw; height: auto; display: block; margin: 0; border-radius: 0;">
+</section>
+  
+  <section style="background-color: #f0f0f0; text-align: center; padding: 40px 20px; max-width: 2000px; margin: 0 auto;">
+  <h2 style="font-size: 2em; color: #000; margin-bottom: 20px;">
+    Ensemble, œuvrons pour un avenir meilleur
+  </h2>
+  <p style="font-size: 2em; Bold; color: #333;">
+    La Fondation Backup Spirituel s'engage pour le changement social, la paix et la justice en Haïti.
+  </p>
+  </section>
+
+<hr style="border: 0; border-top: 4px double #007BFF; margin: 40px 0;">
+  
+  <section id="apropos">
+    <h2>À propos de la Fondation
+    <p>La Fondation Backup Spirituel est une organisation à but non lucratif qui lutte pour les droits humains, l’éducation et le soutien communautaire, en particulier pour les femmes et les enfants dans le Nord-Ouest d'Haïti.</p>
+
+    <p>La Fondation Backup Spirituel est affiliée aux églises Catholiques, dédiée à l'amélioration de la vie des enfants défavorisés. Fondée par M. MEME Selvandieu, Mme MOISE Ranise, et Mme Shirley (USA), elle fournit un soutien essentiel aux enfants en difficulté.</p>
+
+    <p>Ses missions incluent l'accès à l'éducation, à l'assainissement, à la nourriture, et au développement personnel. Elle veut créer un environnement sécuritaire pour que les enfants grandissent et s’épanouissent.</p>
+
+    <p>Elle s'appuie sur des partenariats locaux et internationaux, et des parrainages pour financer ses actions. Elle croit en l’éducation, la santé et le bien-être des enfants pour le développement durable d'Haïti.</p>
+
+    <p>La Fondation agit avec les communautés locales et d'autres ONG pour faire une réelle différence dans la vie des enfants haïtiens, tout en promouvant solidarité et espoir.</p>
+    </h2> </section>
+
+  <section id="actions">
+    <h2>Nos actions
+    <ul>
+      <li>Formations en cybersécurité et alphabétisation numérique</li>
+      <li>Soutien Educatif et Professionnel aux Enfants & Jeunes demunis, 4-21 ans en Haiti</li>
+      <li>Projets d'Alphabetisations aux Personnes agees, 30-100 ans, avec le Projet :"Je peux lire et Ecrire"</li>
+      <li>Projets communautaires et actions de solidarité</li>
+    </ul>
+    </h2> </section>
+
+<hr style="border: 0; border-top: 4px double #007BFF; margin: 40px 0;">
+  
+  <section id="galerie">
+    <h2>Nos Fondateurs :M. MEME Selvandieu & Mme. MOISE Ranise</h2>
+    <div class="galerie">
+      <img src="Selvandieu.jpg" alt="Fondateur 1 - M. MEME Selvandieu">
+      <img src="Ranise.jpg" alt="Fondatrice 2 (Mme. MOISE Ranise)">
+    </div>
+  </section>
+
+  <section id="actualites">
+    <h2>Actualités / Événements</h2>
+    <ul>
+      <li>📅 Samedi 14 juin 2025 : Jeune Emission Backup Spirituel, Radio Firmament FM 88.1 à Mare Rouge</li>
+      <li>📢 Lancement du programme de soutien en Cyber Securite Informatique.</li>
+      <li>🎉 Partenariat avec des ONGs Internationales</li>
+    </ul>
+  </section>
+
+  <hr style="border: 0; border-top: 4px double #007BFF; margin: 40px 0;">
+  
+<section id="soutenir" style="text-align: center; padding: 40px 20px;">
+  <h2>Nous soutenir
+  <p>Vous pouvez contribuer à notre mission en faisant un don ou en devenant bénévole.</h2></p>
+
+  <!-- PAYPAL -->
+  <a href="https://www.paypal.com/donate?business=assobackupspiritueldhaiti@gmail.com&currency_code=USD" target="_blank" rel="noopener noreferrer">
+    <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="Faire un don via PayPal" style="height: 60px; margin-bottom: 10px;">
+  </a>
+  <br>
+  <a href="https://www.paypal.com/donate?business=assobackupspiritueldhaiti@gmail.com&currency_code=USD" class="don-btn" target="_blank" rel="noopener noreferrer">Faire un don (PayPal)</a>
+
+  <hr style="border: 0; border-top: 4px double #007BFF; margin: 40px auto; width: 60%;">
+
+  <!-- MONCASH -->
+  <img src="https://moncashservices.moncashbutton.digicelgroup.com/moncash.png" alt="Faire un don via MonCash" style="height: 60px; margin-bottom: 10px;">
+  <br>
+  <a href="tel:+50946057952" class="moncash-btn">Faire un don (MonCash)</a>
+  <p style="margin-top: 10px; color: #555;">Envoyez votre don en Gourdes au <strong>+509 4605 7952</strong></p>
+
+<hr style="border: 0; border-top: 4px double #007BFF; margin: 40px auto; width: 60%;">
+  
+<!-- Natcash -->
+<img src="CHEMIN_VERS_LOGO_NATCASH" alt="Faire un don via Natcash" style="height: 60px; margin-bottom: 10px;">
+<br>
+<a href="tel:+50941306268" class="natcash-btn">Faire un don (Natcash)</a>
+<p style="margin-top: 10px; color: #555;">
+  Envoyez votre don à <strong>MEME Selvandieu</strong> au <strong>+509 4130 6268</strong>
+</p>
+  </section>
+
+<hr style="border: 0; border-top: 4px double #007BFF; margin: 40px auto; width: 60%;">
+  
+  <section id="emission" style="background-color: #eef6ff; padding: 40px 20px; text-align: center;">
+  <h2 style="font-size: 2em; color: #003366; margin-bottom: 10px;">Émission Backup Spirituel</h2>
+  <p style="font-size: 1.1em; color: #333; margin-bottom: 20px;">
+    Écoutez-nous en direct chaque <strong>mercredi, jeudi et vendredi</strong> de <strong>12h à 14h30</strong> sur <strong>Firmament FM</strong>, 88.1
+  </p>
+
+  <!-- Bouton pou montre lecteur -->
+  <button onclick="document.getElementById('player').style.display='block'; this.style.display='none';"
+    style="background-color: #007BFF; color: white; font-size: 1.2em; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer;">
+    🎧 Écoutez en Direct
+  </button>
+
+  <!-- Lecteur Zeno kache ak non Zeno ranplase -->
+  <div id="player" style="display:none; margin-top: 20px;">
+    <iframe 
+      src="https://zeno.fm/player/radiotele-firmament-fm" 
+      width="100%" 
+      height="120" 
+      frameborder="0" 
+      scrolling="no" 
+      allow="autoplay"
+      style="max-width: 600px; border-radius: 10px;">
+    </iframe>
+    <p style="font-size: 0.9em; color: #555; margin-top: 10px;">Radio <strong>Firmament FM</strong></p>
+  </div>
+</section>
+
+  <hr style="border: 0; border-top: 4px double #007BFF; margin: 40px auto; width: 60%;">
+  
+<!-- Section Contactez-nous -->
+<section id="contact" style="background-color: #fff9f0; padding: 40px 20px; text-align: center;">
+  <h2 style="font-size: 2em; color: #cc6600; margin-bottom: 10px;">Contactez-nous</h2>
+  <p style="font-size: 1.1em; color: #444; margin-bottom: 20px;">
+    Une question ? Une suggestion ? Tchattez en direct avec le fondateur de la Fondation Backup Spirituel.
+  </p>
+
+  <form id="chat-form" style="max-width: 500px; margin: 0 auto;" onsubmit="return sendChatMessage();">
+    <input type="text" id="chat-name" name="user_name" placeholder="Votre nom" required
+      style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;" />
+      
+    <input type="email" id="chat-email" name="user_email" placeholder="Votre e-mail" required
+      style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;" />
+      
+    <textarea id="chat-message" name="message" rows="5" placeholder="Écrivez votre message ici..." required
+      style="width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc;"></textarea>
+
+    <button type="submit"
+      style="background-color: #007BFF; color: white; font-size: 1.1em; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer;">
+      📩 Envoyer le message
+    </button>
+
+    <p id="chat-result" style="margin-top: 15px; font-weight: bold;"></p>
+  </form>
+</section>
+
+<hr style="border: 0; border-top: 4px double #007BFF; margin: 40px auto; width: 60%;">
+
+  <!-- Seksyon Contact ak bouton WhatsApp -->
+<section id="contact" style="background-color: #f9f9f9; padding: 40px 20px; text-align: center;">
+  <h2 style="font-size: 2em; color: #333;">Contact</h2>
+  <p style="font-size: 1.1em; color: #555;">📧 Email : infos@fondationbackupspirituel.com</p>
+  <p style="font-size: 1.1em; color: #555;">📍 Adresse : B.P: 59, HT-4110, Gonaïves, Haïti</p>
+
+  <!-- Bouton WhatsApp -->
+  <a href="https://wa.me/50946057952" target="_blank"
+    style="display: inline-block; background-color: #25D366; color: white; padding: 12px 24px; border-radius: 50px; font-size: 1.1em; text-decoration: none; margin-top: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    💬 Écrire sur WhatsApp
+  </a>
+</section>
+
+  <footer>
+    <p>&copy; 2025 Fondation Backup Spirituel. Tous droits réservés.</p>
+  </footer>
+
+  <a href="#accueil" class="retour-haut">↑ Haut</a>
+
+<!-- SECTION CHAT EN DIRECT -->
+<section id="chat-direct" style="position: fixed; bottom: 20px; right: 20px; z-index: 999;">
+  <button onclick="toggleChat()" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold;">
+    Chat en Direct
+  </button>
+
+  <div id="chatBox" style="display: none; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.2); border-radius: 10px; margin-top: 10px; width: 300px;">
+    <form id="chat-form">
+      <input type="text" name="user_name" placeholder="Votre nom" required style="width: 100%; margin-bottom: 10px; padding: 8px;">
+      <input type="email" name="user_email" placeholder="Votre email" required style="width: 100%; margin-bottom: 10px; padding: 8px;">
+      <textarea name="message" placeholder="Votre message" required style="width: 100%; height: 100px; margin-bottom: 10px; padding: 8px;"></textarea>
+      <button type="submit" style="background-color: #007BFF; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer;">Envoyer</button>
+    </form>
+    <p id="chat-response" style="margin-top: 10px; color: green; font-weight: bold;"></p>
+  </div>
+</section>
+
+<!-- EmailJS SDK (1 sèl fwa) -->
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  (function(){
+    emailjs.init("NohkM1JRPz8WayHup"); // Se User ID ou sou EmailJS
+  })();
+
+  function toggleChat() {
+    var chatBox = document.getElementById('chatBox');
+    chatBox.style.display = (chatBox.style.display === "none") ? "block" : "none";
+  }
+
+  // Kòd pou voye fòm lan
+  document.getElementById('chat-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    emailjs.sendForm('service_06j606x', 'template_fe72dtu', this)
+      .then(function() {
+        document.getElementById('chat-response').innerText = "✅ Message envoyé avec succès !";
+        document.getElementById('chat-form').reset();
+      }, function(error) {
+        document.getElementById('chat-response').innerText = "❌ Erreur lors de l'envoi.";
+        console.log(error);
+      });
+  });
+</script> 
+  
 </body>
 </html>
