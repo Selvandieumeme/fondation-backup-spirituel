@@ -378,24 +378,40 @@
   });
 </script> 
 
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDlCs15MwHxTEpC_-ZaUTS0EWRsze5WQ9s",
-    authDomain: "chatfondasyonfobas.firebaseapp.com",
-    projectId: "chatfondasyonfobas",
-    storageBucket: "chatfondasyonfobas.firebasestorage.app",
-    messagingSenderId: "139150850967",
-    appId: "1:139150850967:web:aca048e13c79161f86e2d2",
-    measurementId: "G-PLDDMQ8KRR"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Fondasyon Fobas</title>
+  <!-- lòt style, meta, elatriye -->
+</head>
+<body>
   
+  <!-- Tout kontni chat ou a vini la -->
+  <div id="chat-container">
+    <!-- Chat UI, login, chanèl, mesaj yo -->
+  </div>
+
+  <!-- Firebase SDK vini jis la -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDlCs15MwHxTEpC_-ZaUTS0EWRsze5WQ9s",
+      authDomain: "chatfondasyonfobas.firebaseapp.com",
+      projectId: "chatfondasyonfobas",
+      storageBucket: "chatfondasyonfobas.firebasestorage.app",
+      messagingSenderId: "139150850967",
+      appId: "1:139150850967:web:aca048e13c79161f86e2d2",
+      measurementId: "G-PLDDMQ8KRR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
+  
+</body>
+</html>
 </body>
 </html>
