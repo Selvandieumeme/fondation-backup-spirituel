@@ -132,7 +132,7 @@
 <body>
 
   <!-- Animation Bienvenue -->
-<div id="floating-text">BIENVENUE SUR LE SITE WEB DE LA FONDATION</div>
+<div id="floating-msg">BIENVENUE SUR LE SITE WEB DE LA FONDATION</div>
   
 
   <span onclick="document.getElementById('chat-form').style.display='none'"
@@ -373,17 +373,23 @@
   });
 </script> 
 
-  <script>
-  const floatingText = document.getElementById('floating-text');
+<script>
+  const msg = document.getElementById("floating-msg");
 
-  document.body.addEventListener('mousemove', () => {
-    floatingText.style.display = 'block';
-    clearTimeout(window.hideFloatingText);
-    window.hideFloatingText = setTimeout(() => {
-      floatingText.style.display = 'none';
-    }, 3000); // disparèt apre 3 segonn
+  document.body.addEventListener("mousemove", () => {
+    // Si mesaj la pa deja parèt
+    if (msg.style.display !== "block") {
+      msg.style.display = "block";
+      msg.style.animation = "floatAndFade 3s ease-in-out";
+
+      // Disparèt li apre 3s
+      setTimeout(() => {
+        msg.style.display = "none";
+      }, 3000);
+    }
   });
 </script>
+
   
 </body>
 </html>
