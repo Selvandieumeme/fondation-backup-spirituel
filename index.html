@@ -346,7 +346,7 @@
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
   (function(){
-    emailjs.init("wi_D-9X91NH92eFD-"); // Se User ID ou sou EmailJS
+    emailjs.init("NohkM1JRPz8WayHup"); // Se User ID ou sou EmailJS
   })();
 
   function toggleChat() {
@@ -358,7 +358,7 @@
   document.getElementById('chat-form').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    emailjs.sendForm('service_f2ely0c', 'template_z31lznu', this)
+    emailjs.sendForm('service_06j606x', 'template_fe72dtu', this)
       .then(function() {
         document.getElementById('chat-response').innerText = "✅ Message envoyé avec succès !";
         document.getElementById('chat-form').reset();
