@@ -139,14 +139,7 @@
 
 <script type="module" src="firebase-init.js"></script>
   
-  <span onclick="document.getElementById('chat-form').style.display='none'"
-  style="position: absolute; top: 10px; right: 15px; font-weight: bold; font-size: 18px; cursor: pointer;">×</span>
-
-  <a href="https://selvandieumeme.github.io/chat-fondasyon/" target="_blank">
-  <button style="background-color:#0052cc; color:white; padding:10px 20px; border:none; border-radius:5px;">
-    Chat en Direct
-  </button>
-</a>
+  
 
   
   <!-- HEADER LA -->
@@ -387,38 +380,41 @@
 </script> 
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ht">
 <head>
   <meta charset="UTF-8">
-  <title>Chat Fondasyon Fobas</title>
-  <!-- lòt style, meta, elatriye -->
+  <title>Chat an Dirèk</title>
 </head>
 <body>
-  
-  <!-- Tout kontni chat ou a vini la -->
-  <div id="chat-container">
-    <!-- Chat UI, login, chanèl, mesaj yo -->
-  </div>
+  <h1>Voye yon mesaj an dirèk</h1>
+  <input type="text" id="mesaj" placeholder="Antre mesaj ou a">
+  <button onclick="voye()">Voye</button>
 
-  <!-- Firebase SDK vini jis la -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics.js";
+  <script>
+    function voye() {
+      const mesaj = document.getElementById("mesaj").value;
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDlCs15MwHxTEpC_-ZaUTS0EWRsze5WQ9s",
-      authDomain: "chatfondasyonfobas.firebaseapp.com",
-      projectId: "chatfondasyonfobas",
-      storageBucket: "chatfondasyonfobas.firebasestorage.app",
-      messagingSenderId: "139150850967",
-      appId: "1:139150850967:web:aca048e13c79161f86e2d2",
-      measurementId: "G-PLDDMQ8KRR"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+      fetch("https://puffy-uttermost-mail.glitch.me/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: mesaj })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.sent) {
+          alert("Mesaj la ale!");
+        } else {
+          alert("Mesaj la pa rive.");
+        }
+      })
+      .catch(error => {
+        console.error("Erè:", error);
+        alert("Gen yon erè sou rezo a.");
+      });
+    }
   </script>
-  
 </body>
 </html>
 </body>
