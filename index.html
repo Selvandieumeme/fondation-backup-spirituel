@@ -137,89 +137,6 @@
 </head>
 <body>
 
-  <!DOCTYPE html>
-<html lang="ht">
-<head>
-  <meta charset="UTF-8">
-  <title>Fobas Chat</title>
-  <style>
-    #chatBox {
-      display: none;
-      margin-top: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #0066cc;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    input {
-      padding: 8px;
-      margin-right: 10px;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Bouton prensipal pou aktive chat la -->
-  <button onclick="montreChat()">Fobas Chat</button>
-
-  <!-- Zòn Chat la ki parèt apre bouton an -->
-  <div id="chatBox">
-    <h2>Antre mesaj ou a:</h2>
-    <input type="text" id="mesaj" placeholder="Ekri yon mesaj...">
-    <button onclick="voye()">Voye</button>
-  </div>
-
-  <!-- Script pou aktive zòn chat la -->
-  <script>
-    function montreChat() {
-      document.getElementById("chatBox").style.display = "block";
-    }
-
-    function voye() {
-      const mesaj = document.getElementById("mesaj").value;
-
-      fetch("https://puffy-uttermost-mail.glitch.me/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message: mesaj })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.sent) {
-          alert("Mesaj la ale!");
-          document.getElementById("mesaj").value = "";
-        } else {
-          alert("Mesaj la pa rive.");
-        }
-      })
-      .catch(error => {
-        console.error("Erè:", error);
-        alert("Gen yon erè sou rezo a.");
-      });
-    }
-
-    // Konfigirasyon Pusher
-    const pusher = new Pusher("5c6d93290538e3d2fbda", {
-      cluster: "us2"
-    });
-
-    const channel = pusher.subscribe("my-channel");
-    channel.bind("my-event", function(data) {
-      alert("Nouvo mesaj: " + data.message);
-    });
-  </script>
-
-  <!-- Pusher client -->
-  <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-</body>
-</html>
   
   <!-- HEADER LA -->
 <header>
@@ -237,7 +154,7 @@
       <li><a href="#actualites">Actualités</a></li>
       <li><a href="#soutenir">Nous soutenir</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li><a href="https://selvandieumeme.github.io/chat-fondasyon/" target="_blank" rel="noopener">Chat en Direct Fobas</a></li>
+      <a href="chat-en-direct-fobas.html">Chat en Direct Fobas</a>
     </ul>
   </nav>
 </header>
