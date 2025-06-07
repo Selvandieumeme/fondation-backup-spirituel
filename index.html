@@ -137,7 +137,9 @@
 </head>
 <body>
 
-<script type="module" src="firebase-init.js"></script>
+<h1>FobasChat</h1>
+<input type="text" id="mesaj" placeholder="Antre mesaj ou a">
+<button onclick="voye()">Voye</button>
   
   
 
@@ -379,6 +381,45 @@
   });
 </script> 
 
+<script>
+  function voye() {
+    const mesaj = document.getElementById("mesaj").value;
+
+    fetch("https://puffy-uttermost-mail.glitch.me/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message: mesaj })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.sent) {
+        alert("Mesaj la ale!");
+      } else {
+        alert("Mesaj la pa rive.");
+      }
+    })
+    .catch(error => {
+      console.error("Erè:", error);
+      alert("Gen yon erè sou rezo a.");
+    });
+  }
+</script>
+
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+<script>
+  const pusher = new Pusher("5c6d93290538e3d2fbda", {
+    cluster: "us2"
+  });
+
+  const channel = pusher.subscribe("my-channel");
+  channel.bind("my-event", function(data) {
+    alert("Nouvo mesaj: " + data.message);
+  });
+</script>
+
+    
 <!DOCTYPE html>
 <html lang="ht">
 <head>
