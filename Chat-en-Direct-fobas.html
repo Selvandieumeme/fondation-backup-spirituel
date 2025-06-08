@@ -113,6 +113,42 @@
     .btn-clear:hover {
       background-color: #c0392b;
     }
+
+    #chatBox {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      margin-top: 60px;
+      text-align: center;
+    }
+
+    #chatBox h2 {
+      margin-bottom: 10px;
+    }
+
+    #chatBox input, #chatBox button {
+      margin: 5px 0;
+    }
+
+    #messages {
+      max-height: 400px;
+      overflow-y: auto;
+      list-style: none;
+      padding: 0;
+    }
+
+    #messages li {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #messages img {
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -191,18 +227,13 @@
       });
     }
 
-    // Fonksyon efase tout mesaj lokalman
     function efaseTout() {
-      const zòn = document.getElementById("messageList");
-      zòn.innerHTML = "";
+      document.getElementById("messageList").innerHTML = "";
     }
 
-    // Resevwa mesaj yo via Pusher
-    const pusher = new Pusher("5c6d93290538e3d2fbda", {
-      cluster: "us2"
-    });
-
+    const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
     const channel = pusher.subscribe("my-channel");
+
     channel.bind("my-event", function(data) {
       const messageList = document.getElementById("messageList");
       const newMessage = document.createElement("div");
@@ -212,130 +243,5 @@
     });
   </script>
 
-<script>
-// Subscribe ak fetch istwa
-const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
-const channel = pusher.subscribe("my-channel");
-
-channel.bind("pusher:subscription_succeeded", fetchHistory);
-channel.bind("my-event", appendMessage);
-
-// Fonksyon yo
-function fetchHistory() {
-  fetch("/messages") // oubyen URL sèvè Glitch ou
-    .then(res => res.json())
-    .then(data => {
-      data.forEach(appendMessage);
-    });
-}
-
-function appendMessage(data) {
-  const ul = document.getElementById("messages");
-  const li = document.createElement("li");
-  li.innerHTML = `
-    <img src="${data.avatarUrl}" alt="${data.userName}" width="32" height="32" style="border-radius:50%;vertical-align:middle;">
-    <strong>${data.userName}</strong> <em>${new Date(data.timestamp).toLocaleTimeString()}</em><br>
-    ${data.message}
-    <button onclick="deleteMessage(${data.id})">🗑️</button>
-  `;
-  ul.appendChild(li);
-}
-
-// Voye mesaj ak avatar/admin
-function sendMessage() {
-  const userName = "Visiteur"; // ou ranplase ak login user
-  const avatarUrl = "https://i.pravatar.cc/32";
-  const message = document.getElementById("mesaj").value;
-  fetch("/send", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, userName, avatarUrl })
-  });
-}
-
-// Efase mesaj lokal (pòsib ija kont sèvè)
-function deleteMessage(id) {
-  document.getElementById("messages")
-    .querySelectorAll("li")
-    .forEach(li => {
-      if (li.innerHTML.includes(`deleteMessage(${id})`)) li.remove();
-    });
-}
-</script>
-  
 </body>
 </html>
-
-
-<main>
-  <div>
-    <input type="text" id="mesaj" placeholder="Ekri yon mesaj...">
-    <button onclick="sendMessage()">Voye</button>
-  </div>
-
-  <ul id="messages"></ul>   <!-- <ul> kote mesaj yo parèt -->
-</main>
-
-<script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-<script>
-  const channel = new Pusher("5c6d93290538e3d2fbda", {
-    cluster: "us2"
-  }).subscribe("my-channel");
-  
-  channel.bind("my-event", appendMessage);
-
-  function sendMessage() {
-    const text = document.getElementById("mesaj").value;
-    fetch("https://puffy-uttermost-mail.glitch.me/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text })
-    });
-    document.getElementById("mesaj").value = ""; // efase kadran apre voye
-  }
-
-  function appendMessage(data) {
-    const ul = document.getElementById("messages");
-    const li = document.createElement("li");
-    li.textContent = data.message;
-    ul.appendChild(li); // ajoute mesaj nan lis imprimé
-  }
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style>
-  #chatBox {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: start;
-    margin-top: 60px;
-    text-align: center;
-  }
-
-  #chatBox h2 {
-    margin-bottom: 10px;
-  }
-
-  #chatBox input, #chatBox button {
-    margin: 5px 0;
-  }
-</style>
-  
-#messages { max-height: 400px; overflow-y: auto; list-style: none; padding: 0; }
-#messages li { padding: 10px; border-bottom: 1px solid #ccc; display: flex; align-items: center; gap: 10px; }
-#messages img { flex-shrink: 0; }
