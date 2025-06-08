@@ -1,1 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat en Direct Fobas</title>
+  <link rel="stylesheet" href="style.css"> <!-- si ou gen stylesheet -->
+</head>
+<body>
 
+  <header>
+    <h1>Chat en Direct Fobas</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="Chat-en-Direct-fobas.html">Chat en Direct Fobas</a></li>
+        <!-- lòt lyen ou vle -->
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Diskite an dirèk ak lòt vizitè yo!</h2>
+    
+    <div>
+      <input type="text" id="message" placeholder="Ekri mesaj ou..." />
+      <button onclick="sendMessage()">Voye</button>
+    </div>
+    
+    <ul id="messages"></ul>
+  </main>
+
+  <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+  <script>
+    const pusher = new Pusher("5c6d93290538e3d2fbda", {
+      cluster: "us2"
+    });
+
+    const channel = pusher.subscribe("my-channel");
+    channel.bind("my-event", function(data) {
+      const messages = document.getElementById("messages");
+      const li = document.createElement("li");
+      li.textContent = data.message;
+      messages.appendChild(li);
+    });
+
+    function sendMessage() {
+      const message = document.getElementById("message").value;
+      fetch("https://puffy-uttermost-mail.glitch.me/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: message })
+      });
+    }
+  </script>
+
+</body>
+</html>
