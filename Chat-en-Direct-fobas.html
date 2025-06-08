@@ -212,6 +212,57 @@
     });
   </script>
 
+<script>
+// Subscribe ak fetch istwa
+const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
+const channel = pusher.subscribe("my-channel");
+
+channel.bind("pusher:subscription_succeeded", fetchHistory);
+channel.bind("my-event", appendMessage);
+
+// Fonksyon yo
+function fetchHistory() {
+  fetch("/messages") // oubyen URL sèvè Glitch ou
+    .then(res => res.json())
+    .then(data => {
+      data.forEach(appendMessage);
+    });
+}
+
+function appendMessage(data) {
+  const ul = document.getElementById("messages");
+  const li = document.createElement("li");
+  li.innerHTML = `
+    <img src="${data.avatarUrl}" alt="${data.userName}" width="32" height="32" style="border-radius:50%;vertical-align:middle;">
+    <strong>${data.userName}</strong> <em>${new Date(data.timestamp).toLocaleTimeString()}</em><br>
+    ${data.message}
+    <button onclick="deleteMessage(${data.id})">🗑️</button>
+  `;
+  ul.appendChild(li);
+}
+
+// Voye mesaj ak avatar/admin
+function sendMessage() {
+  const userName = "Visiteur"; // ou ranplase ak login user
+  const avatarUrl = "https://i.pravatar.cc/32";
+  const message = document.getElementById("mesaj").value;
+  fetch("/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, userName, avatarUrl })
+  });
+}
+
+// Efase mesaj lokal (pòsib ija kont sèvè)
+function deleteMessage(id) {
+  document.getElementById("messages")
+    .querySelectorAll("li")
+    .forEach(li => {
+      if (li.innerHTML.includes(`deleteMessage(${id})`)) li.remove();
+    });
+}
+</script>
+  
 </body>
 </html>
 
