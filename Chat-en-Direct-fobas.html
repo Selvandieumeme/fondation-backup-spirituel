@@ -1,4 +1,13 @@
- <!-- HEADER PAJ LA -->
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat en Direct Fobas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER PAJ LA -->
   <header>
     <img src="logo.png" alt="Logo Fondation" style="height: 60px;">
     <h1>Fondation Backup Spirituel</h1>
@@ -11,42 +20,6 @@
     </nav>
   </header>
 
-
-  <!-- FOOTER PAJ LA -->
-  <footer>
-    <p>&copy; 2025 Fondation Backup Spirituel - Tout dwa rezève</p>
-  </footer>
-
-
-
-<!DOCTYPE html>
-<html lang="ht">
-<head>
-  <meta charset="UTF-8">
-  <title>Chat en Direct Fobas</title>
-  <style>
-    #chatBox {
-      margin-top: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #0066cc;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    input {
-      padding: 8px;
-      margin-right: 10px;
-    }
-  </style>
-</head>
-<body>
-
-  <h1>Chat en Direct Fobas</h1>
-
   <!-- Zòn Chat la -->
   <div id="chatBox">
     <h2>Antre mesaj ou a:</h2>
@@ -54,7 +27,12 @@
     <button onclick="voye()">Voye</button>
   </div>
 
-  <!-- Script pou voye mesaj -->
+  <!-- FOOTER PAJ LA -->
+  <footer>
+    <p>&copy; 2025 Fondation Backup Spirituel - Tout dwa rezève</p>
+  </footer>
+
+  <!-- SCRIPT CHAT + PUSHER -->
   <script>
     function voye() {
       const mesaj = document.getElementById("mesaj").value;
@@ -81,7 +59,6 @@
       });
     }
 
-    // Konfigirasyon Pusher pou resevwa mesaj
     const pusher = new Pusher("5c6d93290538e3d2fbda", {
       cluster: "us2"
     });
@@ -92,7 +69,7 @@
     });
   </script>
 
-  <!-- Pusher client -->
   <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+
 </body>
 </html>
