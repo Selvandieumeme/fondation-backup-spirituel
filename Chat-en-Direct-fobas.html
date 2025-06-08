@@ -4,12 +4,101 @@
   <meta charset="UTF-8">
   <title>Chat en Direct Fobas</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Estil rapid pou chat la si pa gen style.css */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header, footer {
+      background-color: #2c3e50;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    nav ul li {
+      display: inline;
+      margin-right: 15px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+    }
+
+    nav ul li a.active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .chat-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    .chat-container h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    #messageList {
+      border: 1px solid #ddd;
+      padding: 15px;
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      background: #f2f2f2;
+      border-radius: 5px;
+    }
+
+    #messageList div {
+      margin-bottom: 10px;
+      padding: 8px;
+      background: #e0f7fa;
+      border-radius: 5px;
+    }
+
+    #mesaj {
+      width: 80%;
+      padding: 10px;
+      margin-right: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+  </style>
 </head>
 <body>
 
-  <header class="site-header">
-    <h1>Chat en Direct Fobas</h1>
-    <nav class="main-nav">
+  <!-- HEADER -->
+  <header>
+    <h1>Fondation Backup Spirituel</h1>
+    <nav>
       <ul>
         <li><a href="index.html">Accueil</a></li>
         <li><a href="Chat-en-Direct-fobas.html" class="active">Chat en Direct Fobas</a></li>
@@ -17,24 +106,35 @@
     </nav>
   </header>
 
+  <!-- ZÒN CHAT -->
   <main>
-    <section style="text-align: center; padding: 40px;">
-      <h2>Diskite an dirèk ak lòt vizitè yo!</h2>
-      <p>Antre mesaj ou a:</p>
-      <input type="text" id="mesaj" placeholder="Ekri mesaj ou..." style="padding: 10px; width: 300px;">
-      <br><br>
-      <button onclick="voye()" style="padding: 10px 20px;">Voye</button>
-    </section>
+    <div class="chat-container">
+      <h2>Chat en Direct Fobas</h2>
+      <p>Diskite an dirèk ak lòt vizitè yo!</p>
+
+      <!-- Zòn pou mesaj yo -->
+      <div id="messageList"></div>
+
+      <!-- Jaden pou ekri + bouton -->
+      <input type="text" id="mesaj" placeholder="Ekri mesaj ou...">
+      <button onclick="voye()">Voye</button>
+    </div>
   </main>
 
-  <footer class="site-footer">
+  <!-- FOOTER -->
+  <footer>
     <p>&copy; 2025 Fondation Backup Spirituel - Tout dwa rezève</p>
   </footer>
 
+  <!-- SCRIPT PUSHER + CHAT -->
   <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
   <script>
     function voye() {
-      const mesaj = document.getElementById("mesaj").value;
+      const mesaj = document.getElementById("mesaj").value.trim();
+      if (mesaj === "") {
+        alert("Tanpri ekri yon mesaj anvan ou voye.");
+        return;
+      }
 
       fetch("https://puffy-uttermost-mail.glitch.me/send", {
         method: "POST",
@@ -46,7 +146,6 @@
       .then(res => res.json())
       .then(data => {
         if (data.sent) {
-          alert("Mesaj la ale!");
           document.getElementById("mesaj").value = "";
         } else {
           alert("Mesaj la pa rive.");
@@ -58,18 +157,29 @@
       });
     }
 
+    // Konekte ak Pusher
     const pusher = new Pusher("5c6d93290538e3d2fbda", {
       cluster: "us2"
     });
 
     const channel = pusher.subscribe("my-channel");
     channel.bind("my-event", function(data) {
-      alert("Nouvo mesaj: " + data.message);
+      const messageList = document.getElementById("messageList");
+      const newMessage = document.createElement("div");
+      newMessage.textContent = data.message;
+      messageList.appendChild(newMessage);
+      messageList.scrollTop = messageList.scrollHeight;
     });
   </script>
 
 </body>
 </html>
+
+
+
+
+
+
 
 
 
