@@ -112,3 +112,12 @@ nav a.active {
   font-weight: bold;
 }
 
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* pou mete li nan mitan orizontalman */
+  margin-top: 50px;    /* espas anwo */
+  text-align: center;  /* pou tèks yo santre */
+}
+
