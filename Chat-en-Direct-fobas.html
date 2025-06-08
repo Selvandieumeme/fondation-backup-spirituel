@@ -267,6 +267,41 @@ function deleteMessage(id) {
 </html>
 
 
+<main>
+  <div>
+    <input type="text" id="mesaj" placeholder="Ekri yon mesaj...">
+    <button onclick="sendMessage()">Voye</button>
+  </div>
+
+  <ul id="messages"></ul>   <!-- <ul> kote mesaj yo parèt -->
+</main>
+
+<script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+<script>
+  const channel = new Pusher("5c6d93290538e3d2fbda", {
+    cluster: "us2"
+  }).subscribe("my-channel");
+  
+  channel.bind("my-event", appendMessage);
+
+  function sendMessage() {
+    const text = document.getElementById("mesaj").value;
+    fetch("https://puffy-uttermost-mail.glitch.me/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    });
+    document.getElementById("mesaj").value = ""; // efase kadran apre voye
+  }
+
+  function appendMessage(data) {
+    const ul = document.getElementById("messages");
+    const li = document.createElement("li");
+    li.textContent = data.message;
+    ul.appendChild(li); // ajoute mesaj nan lis imprimé
+  }
+</script>
+
 
 
 
