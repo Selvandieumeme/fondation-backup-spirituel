@@ -120,25 +120,3 @@ main {
   margin-top: 50px;    /* espas anwo */
   text-align: center;  /* pou tèks yo santre */
 }
-
-
-body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding-top: 60px;
-      text-align: center;
-      background-color: #f2f2f2; /* opsyonèl: pou bay yon koulè fon */
-    }
-
-    #chatBox {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-button:hover {
-  background-color: #004999;
-}
