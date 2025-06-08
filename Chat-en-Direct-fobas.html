@@ -1,60 +1,77 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ht">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Chat en Direct Fobas</title>
-  <link rel="stylesheet" href="style.css"> <!-- si ou gen stylesheet -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <header>
+  <header class="site-header">
     <h1>Chat en Direct Fobas</h1>
-    <nav>
+    <nav class="main-nav">
       <ul>
         <li><a href="index.html">Accueil</a></li>
-        <li><a href="Chat-en-Direct-fobas.html">Chat en Direct Fobas</a></li>
-        <!-- lòt lyen ou vle -->
+        <li><a href="Chat-en-Direct-fobas.html" class="active">Chat en Direct Fobas</a></li>
       </ul>
     </nav>
   </header>
 
   <main>
-    <h2>Diskite an dirèk ak lòt vizitè yo!</h2>
-    
-    <div>
-      <input type="text" id="message" placeholder="Ekri mesaj ou..." />
-      <button onclick="sendMessage()">Voye</button>
-    </div>
-    
-    <ul id="messages"></ul>
+    <section style="text-align: center; padding: 40px;">
+      <h2>Diskite an dirèk ak lòt vizitè yo!</h2>
+      <p>Antre mesaj ou a:</p>
+      <input type="text" id="mesaj" placeholder="Ekri mesaj ou..." style="padding: 10px; width: 300px;">
+      <br><br>
+      <button onclick="voye()" style="padding: 10px 20px;">Voye</button>
+    </section>
   </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Fondation Backup Spirituel - Tout dwa rezève</p>
+  </footer>
 
   <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
   <script>
+    function voye() {
+      const mesaj = document.getElementById("mesaj").value;
+
+      fetch("https://puffy-uttermost-mail.glitch.me/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: mesaj })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.sent) {
+          alert("Mesaj la ale!");
+          document.getElementById("mesaj").value = "";
+        } else {
+          alert("Mesaj la pa rive.");
+        }
+      })
+      .catch(error => {
+        console.error("Erè:", error);
+        alert("Gen yon erè sou rezo a.");
+      });
+    }
+
     const pusher = new Pusher("5c6d93290538e3d2fbda", {
       cluster: "us2"
     });
 
     const channel = pusher.subscribe("my-channel");
     channel.bind("my-event", function(data) {
-      const messages = document.getElementById("messages");
-      const li = document.createElement("li");
-      li.textContent = data.message;
-      messages.appendChild(li);
+      alert("Nouvo mesaj: " + data.message);
     });
-
-    function sendMessage() {
-      const message = document.getElementById("message").value;
-      fetch("https://puffy-uttermost-mail.glitch.me/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message: message })
-      });
-    }
   </script>
+
+</body>
+</html>
+
+
 
 <style>
   #chatBox {
