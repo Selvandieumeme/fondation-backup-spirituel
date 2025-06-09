@@ -113,42 +113,6 @@
     .btn-clear:hover {
       background-color: #c0392b;
     }
-
-    #chatBox {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: start;
-      margin-top: 60px;
-      text-align: center;
-    }
-
-    #chatBox h2 {
-      margin-bottom: 10px;
-    }
-
-    #chatBox input, #chatBox button {
-      margin: 5px 0;
-    }
-
-    #messages {
-      max-height: 400px;
-      overflow-y: auto;
-      list-style: none;
-      padding: 0;
-    }
-
-    #messages li {
-      padding: 10px;
-      border-bottom: 1px solid #ccc;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    #messages img {
-      flex-shrink: 0;
-    }
   </style>
 </head>
 <body>
@@ -192,34 +156,39 @@
     <p>&copy; 2025 Fondation Backup Spirituel - Tout dwa rezève</p>
   </footer>
 
+  <!-- SON MP3 -->
+  <audio id="messageSound" src="https://notificationsounds.com/storage/sounds/file-sounds-1152-pristine.mp3" preload="auto"></audio>
+
   <!-- SCRIPT PUSHER + CHAT -->
   <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
   <script>
+    // Sove/Retabli non itilizatè
+    window.onload = () => {
+      const savedName = localStorage.getItem("fobas_username");
+      if (savedName) document.getElementById("username").value = savedName;
+    };
+
     function voye() {
       const non = document.getElementById("username").value.trim();
       const mesaj = document.getElementById("mesaj").value.trim();
-
       if (non === "" || mesaj === "") {
         alert("Tanpri mete non ou epi ekri yon mesaj.");
         return;
       }
-
-      const konbine = non + ": " + mesaj;
+      localStorage.setItem("fobas_username", non);
+      const now = new Date();
+      const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const konbine = `[${timestamp}] ${non}: ${mesaj}`;
 
       fetch("https://chat-en-direct-fobas.onrender.com/send", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: konbine })
       })
       .then(res => res.json())
       .then(data => {
-        if (data.sent) {
-          document.getElementById("mesaj").value = "";
-        } else {
-          alert("Mesaj la pa rive.");
-        }
+        if (data.sent) document.getElementById("mesaj").value = "";
+        else alert("Mesaj la pa rive.");
       })
       .catch(error => {
         console.error("Erè:", error);
@@ -240,6 +209,9 @@
       newMessage.textContent = data.message;
       messageList.appendChild(newMessage);
       messageList.scrollTop = messageList.scrollHeight;
+
+      // Son chak mesaj
+      document.getElementById("messageSound").play().catch(e => {});
     });
   </script>
 
