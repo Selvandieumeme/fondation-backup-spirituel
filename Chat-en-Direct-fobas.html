@@ -114,49 +114,11 @@
       background-color: #c0392b;
     }
 
-    #chatBox {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: start;
-      margin-top: 60px;
-      text-align: center;
+    @media screen and (max-width: 600px) {
+      .chat-container, #loginContainer { padding:10px; margin:10px; }
+      input[type="text"], button { width:100%; margin-bottom:10px; box-sizing:border-box; }
+      #messageList { height:250px; }
     }
-
-    #chatBox h2 {
-      margin-bottom: 10px;
-    }
-
-    #chatBox input, #chatBox button {
-      margin: 5px 0;
-    }
-
-    #messages {
-      max-height: 400px;
-      overflow-y: auto;
-      list-style: none;
-      padding: 0;
-    }
-
-    #messages li {
-      padding: 10px;
-      border-bottom: 1px solid #ccc;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    #messages img {
-      flex-shrink: 0;
-    }
-
-@media screen and (max-width: 600px) {
-  .chat-container, #loginContainer { padding:10px; margin:10px; }
-  input[type="text"], button { width:100%; margin-bottom:10px; box-sizing:border-box; }
-  #messageList { height:250px; }
-}
-
-    
   </style>
 </head>
 <body>
@@ -172,23 +134,24 @@
     </nav>
   </header>
 
-<div id="loginContainer" style="text-align:center; margin:20px;">
-  <h3>Antre non ou pou kòmanse chat la</h3>
-  <input type="text" id="usernameInput" placeholder="Non itilizatè..." style="padding:10px; width:60%; max-width:300px;">
-  <button onclick="login()" style="margin-left:10px;">Kòmanse</button>
-</div>
-  
-  <!-- ZÒN CHAT -->
+  <!-- LOGIN -->
+  <div id="loginContainer" style="text-align:center; margin:20px;">
+    <h3>Antre non ou pou kòmanse chat la</h3>
+    <input type="text" id="usernameInput" placeholder="Non itilizatè..." style="padding:10px; width:60%; max-width:300px;">
+    <button onclick="login()" style="margin-left:10px;">Kòmanse</button>
+  </div>
+
+  <!-- CHAT -->
   <main>
-  <div class="chat-container" id="chatContainer" style="display:none;">
-    ...
-    <div id="messageList"></div>
-   
-    <div class="form-group">
+    <div class="chat-container" id="chatContainer" style="display:none;">
+      <h2>Chat Fobas</h2>
+      <div id="messageList"></div>
+
+      <div class="form-group">
         <input type="text" id="username" placeholder="Non w la (obligatwa)">
-      </div> 
-  
-    <div class="form-group">
+      </div>
+
+      <div class="form-group">
         <input type="text" id="mesaj" placeholder="Ekri mesaj ou...">
         <button onclick="voye()">Voye</button>
         <button class="btn-clear" onclick="efaseTout()">Efase tout</button>
@@ -202,83 +165,87 @@
     <p>&copy; 2025 Fondation Backup Spirituel - Tout dwa rezève</p>
   </footer>
 
+  <!-- SCRIPT -->
   <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-<script>
-  function getTime() {
-    return new Date().toLocaleTimeString();
-  }
-
-  function playSound() {
-    const sound = document.getElementById("chatSound");
-    sound.play();
-  }
-
-  function login() {
-    const u = document.getElementById("usernameInput").value.trim();
-    if (u) {
-      localStorage.setItem("chatUsername", u);
-      document.getElementById("loginContainer").style.display = "none";
-      document.getElementById("chatContainer").style.display = "block";
-      document.getElementById("username").value = u;
+  <script>
+    function getTime() {
+      return new Date().toLocaleTimeString();
     }
-  }
 
-  window.onload = () => {
-    const u = localStorage.getItem("chatUsername");
-    if (u) {
-      document.getElementById("loginContainer").style.display = "none";
-      document.getElementById("chatContainer").style.display = "block";
-      document.getElementById("username").value = u;
+    function playSound() {
+      const sound = document.getElementById("chatSound");
+      sound.play();
     }
-    document.querySelectorAll('.chat-container').forEach(container => {
+
+    function login() {
+      const u = document.getElementById("usernameInput").value.trim();
+      if (u) {
+        localStorage.setItem("chatUsername", u);
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("chatContainer").style.display = "block";
+        document.getElementById("username").value = u;
+      }
+    }
+
+    window.onload = () => {
+      const u = localStorage.getItem("chatUsername");
+      if (u) {
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("chatContainer").style.display = "block";
+        document.getElementById("username").value = u;
+      }
+
       const saved = JSON.parse(localStorage.getItem("chatLog")) || [];
       saved.forEach(msg => {
         const div = document.createElement("div");
         div.innerHTML = `<strong>${msg.user}:</strong> ${msg.text} <span style="font-size:12px;color:gray;">[${msg.time}]</span>`;
         document.getElementById("messageList").appendChild(div);
       });
+    };
+
+    function voye() {
+      const non = document.getElementById("username").value.trim();
+      const mesaj = document.getElementById("mesaj").value.trim();
+      const time = getTime();
+      if (!non || !mesaj) {
+        alert("Tanpri mete non ou epi ekri yon mesaj.");
+        return;
+      }
+
+      const data = { message: `${non}: ${mesaj} [${time}]` };
+      fetch("https://chat-en-direct-fobas.onrender.com/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(r => r.json()).then(responsive => {
+        if (responsive.sent) {
+          document.getElementById("mesaj").value = "";
+          let log = JSON.parse(localStorage.getItem("chatLog")) || [];
+          log.push({ user: non, text: mesaj, time });
+          localStorage.setItem("chatLog", JSON.stringify(log));
+        } else {
+          alert("Mesaj la pa rive.");
+        }
+      })
+      .catch(() => alert("Gen yon erè sou rezo a."));
+    }
+
+    function efaseTout() {
+      document.getElementById("messageList").innerHTML = "";
+      localStorage.removeItem("chatLog");
+    }
+
+    const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
+    const channel = pusher.subscribe("my-channel");
+    channel.bind("my-event", function(data) {
+      const div = document.createElement("div");
+      div.textContent = data.message;
+      document.getElementById("messageList").appendChild(div);
+      document.getElementById("messageList").scrollTop = document.getElementById("messageList").scrollHeight;
+      playSound();
     });
-  };
-
-  function voye() {
-    const non = document.getElementById("username").value;
-    const mesaj = document.getElementById("mesaj").value.trim();
-    const time = getTime();
-    if (!non || !mesaj) { alert("Tanpri mete non ou epi ekri yon mesaj."); return; }
-
-    const data = { message: `${non}: ${mesaj} [${time}]` };
-    fetch("https://chat-en-direct-fobas.onrender.com/send", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify(data)
-    })
-    .then(r => r.json()).then(responsive => {
-      if (responsive.sent) {
-        document.getElementById("mesaj").value = "";
-        // save
-        let log = JSON.parse(localStorage.getItem("chatLog")) || [];
-        log.push({ user: non, text: mesaj, time });
-        localStorage.setItem("chatLog", JSON.stringify(log));
-      } else alert("Mesaj la pa rive.");
-    })
-    .catch(() => alert("Gen yon erè sou rezo a."));
-  }
-
-  function efaseTout() {
-    document.getElementById("messageList").innerHTML = "";
-    localStorage.removeItem("chatLog");
-  }
-
-  const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
-  const channel = pusher.subscribe("my-channel");
-  channel.bind("my-event", function(data) {
-    const div = document.createElement("div");
-    div.textContent = data.message;
-    document.getElementById("messageList").appendChild(div);
-    document.getElementById("messageList").scrollTop = document.getElementById("messageList").scrollHeight;
-    playSound();
-  });
-</script>
+  </script>
 
 </body>
 </html>
