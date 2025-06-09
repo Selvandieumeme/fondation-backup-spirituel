@@ -8,10 +8,10 @@ app.use(cors());
 app.use(express.json());
 
 const pusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID || "2004792",
-  key: process.env.PUSHER_KEY || "5c6d93290538e3d2fbda",
-  secret: process.env.PUSHER_SECRET || "048602b30ec836088197",
-  cluster: process.env.PUSHER_CLUSTER || "us2",
+  appId: process.env.PUSHER_APP_ID,
+  key: process.env.PUSHER_KEY,
+  secret: process.env.PUSHER_SECRET,
+  cluster: process.env.PUSHER_CLUSTER,
   useTLS: true
 });
 
