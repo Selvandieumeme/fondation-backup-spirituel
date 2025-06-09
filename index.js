@@ -1,3 +1,4 @@
+require('dotenv').config(); // Pou li .env otomatik
 const express = require("express");
 const Pusher = require("pusher");
 const cors = require("cors");
