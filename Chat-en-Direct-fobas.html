@@ -149,6 +149,14 @@
     #messages img {
       flex-shrink: 0;
     }
+
+@media screen and (max-width: 600px) {
+  .chat-container, #loginContainer { padding:10px; margin:10px; }
+  input[type="text"], button { width:100%; margin-bottom:10px; box-sizing:border-box; }
+  #messageList { height:250px; }
+}
+
+    
   </style>
 </head>
 <body>
@@ -164,11 +172,19 @@
     </nav>
   </header>
 
+<div id="loginContainer" style="text-align:center; margin:20px;">
+  <h3>Antre non ou pou kòmanse chat la</h3>
+  <input type="text" id="usernameInput" placeholder="Non itilizatè..." style="padding:10px; width:60%; max-width:300px;">
+  <button onclick="login()" style="margin-left:10px;">Kòmanse</button>
+</div>
+Anbal chatContai
+  
   <!-- ZÒN CHAT -->
   <main>
-    <div class="chat-container">
-      <h2>Chat en Direct Fobas</h2>
-      <p>Diskite an dirèk ak lòt vizitè yo!</p>
+  <div class="chat-container" id="chatContainer" style="display:none;">
+    ...
+  </div>
+</main>
 
       <!-- Zòn mesaj yo -->
       <div id="messageList"></div>
@@ -189,59 +205,87 @@
 
   <!-- FOOTER -->
   <footer>
+    <audio id="chatSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
     <p>&copy; 2025 Fondation Backup Spirituel - Tout dwa rezève</p>
   </footer>
 
-  <!-- SCRIPT PUSHER + CHAT -->
   <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-  <script>
-    function voye() {
-      const non = document.getElementById("username").value.trim();
-      const mesaj = document.getElementById("mesaj").value.trim();
+<script>
+  function getTime() {
+    return new Date().toLocaleTimeString();
+  }
 
-      if (non === "" || mesaj === "") {
-        alert("Tanpri mete non ou epi ekri yon mesaj.");
-        return;
-      }
+  function playSound() {
+    const sound = document.getElementById("chatSound");
+    sound.play();
+  }
 
-      const konbine = non + ": " + mesaj;
+  function login() {
+    const u = document.getElementById("usernameInput").value.trim();
+    if (u) {
+      localStorage.setItem("chatUsername", u);
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("chatContainer").style.display = "block";
+      document.getElementById("username").value = u;
+    }
+  }
 
-      fetch("https://chat-en-direct-fobas.onrender.com/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message: konbine })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.sent) {
-          document.getElementById("mesaj").value = "";
-        } else {
-          alert("Mesaj la pa rive.");
-        }
-      })
-      .catch(error => {
-        console.error("Erè:", error);
-        alert("Gen yon erè sou rezo a.");
+  window.onload = () => {
+    const u = localStorage.getItem("chatUsername");
+    if (u) {
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("chatContainer").style.display = "block";
+      document.getElementById("username").value = u;
+    }
+    document.querySelectorAll('.chat-container').forEach(container => {
+      const saved = JSON.parse(localStorage.getItem("chatLog")) || [];
+      saved.forEach(msg => {
+        const div = document.createElement("div");
+        div.innerHTML = `<strong>${msg.user}:</strong> ${msg.text} <span style="font-size:12px;color:gray;">[${msg.time}]</span>`;
+        document.getElementById("messageList").appendChild(div);
       });
-    }
-
-    function efaseTout() {
-      document.getElementById("messageList").innerHTML = "";
-    }
-
-    const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
-    const channel = pusher.subscribe("my-channel");
-
-    channel.bind("my-event", function(data) {
-      const messageList = document.getElementById("messageList");
-      const newMessage = document.createElement("div");
-      newMessage.textContent = data.message;
-      messageList.appendChild(newMessage);
-      messageList.scrollTop = messageList.scrollHeight;
     });
-  </script>
+  };
+
+  function voye() {
+    const non = document.getElementById("username").value;
+    const mesaj = document.getElementById("mesaj").value.trim();
+    const time = getTime();
+    if (!non || !mesaj) { alert("Tanpri mete non ou epi ekri yon mesaj."); return; }
+
+    const data = { message: `${non}: ${mesaj} [${time}]` };
+    fetch("https://chat-en-direct-fobas.onrender.com/send", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(data)
+    })
+    .then(r => r.json()).then(responsive => {
+      if (responsive.sent) {
+        document.getElementById("mesaj").value = "";
+        // save
+        let log = JSON.parse(localStorage.getItem("chatLog")) || [];
+        log.push({ user: non, text: mesaj, time });
+        localStorage.setItem("chatLog", JSON.stringify(log));
+      } else alert("Mesaj la pa rive.");
+    })
+    .catch(() => alert("Gen yon erè sou rezo a."));
+  }
+
+  function efaseTout() {
+    document.getElementById("messageList").innerHTML = "";
+    localStorage.removeItem("chatLog");
+  }
+
+  const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
+  const channel = pusher.subscribe("my-channel");
+  channel.bind("my-event", function(data) {
+    const div = document.createElement("div");
+    div.textContent = data.message;
+    document.getElementById("messageList").appendChild(div);
+    document.getElementById("messageList").scrollTop = document.getElementById("messageList").scrollHeight;
+    playSound();
+  });
+</script>
 
 </body>
 </html>
