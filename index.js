@@ -23,23 +23,24 @@ app.post("/send", (req, res) => {
     return res.status(400).json({ error: "Mesaj pa ka vid." });
   }
 
-  // 1. Voye sou Pusher
-  pusher.trigger("my-channel", "my-event", {
-    message: message
-  });
+  // Voye sou Pusher
+  pusher.trigger("my-channel", "my-event", { message });
 
-  // 2. Sove mesaj la nan chat-log.txt
-  const now = new Date().toISOString();
-  const logMessage = `[${now}] ${message}\n`;
+  // Prepare fichye
+  const logMessage = `[${new Date().toISOString()}] ${message}\n`;
+
+  // Sove mesaj la nan chat-log.txt
   fs.appendFile("chat-log.txt", logMessage, err => {
     if (err) {
-      console.error("Echèk pou sove mesaj:", err);
+      console.error("❌ Echèk pou sove mesaj:", err);
+      return res.status(500).json({ sent: false, error: "Pa kapab sove mesaj." });
     }
-  });
 
-  // 3. Repons
-  res.json({ sent: true });
+    console.log("✅ Mesaj sovgade nan chat-log.txt");
+    res.status(200).json({ sent: true });
+  });
 });
+
 
 app.get("/", (req, res) => {
   res.send("Serve a ap mache");
