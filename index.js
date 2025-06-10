@@ -61,3 +61,13 @@ mongoose.connect("mongodb+srv://adminfobas:Selvandieu509ranise@fobas-chat.rxmfd4
 .then(() => console.log("✅ MongoDB konekte avèk siksè !"))
 .catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
 
+const mongoose = require('mongoose');
+
+// Modèl pou mesaj chat yo
+const messageSchema = new mongoose.Schema({
+  sender: String,
+  content: String,
+  timestamp: { type: Date, default: Date.now }
+});
+
+const Message = mongoose.model('Message', messageSchema);
