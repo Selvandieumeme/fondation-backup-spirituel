@@ -16,6 +16,7 @@ const pusher = new Pusher({
   useTLS: true
 });
 
+
 app.post("/send", (req, res) => {
   const { message } = req.body;
 
@@ -53,6 +54,8 @@ app.listen(PORT, () => {
 
 const mongoose = require('mongoose');
 
+
+
 // Koneksyon ak MongoDB Atlas
 mongoose.connect("mongodb+srv://adminfobas:Selvandieu509ranise@fobas-chat.rxmfd4k.mongodb.net/fobas_chat_db?retryWrites=true&w=majority&appName=fobas-chat", {
   useNewUrlParser: true,
@@ -63,6 +66,8 @@ mongoose.connect("mongodb+srv://adminfobas:Selvandieu509ranise@fobas-chat.rxmfd4
 
 const mongoose = require('mongoose');
 
+
+
 // Modèl pou mesaj chat yo
 const messageSchema = new mongoose.Schema({
   sender: String,
@@ -71,3 +76,17 @@ const messageSchema = new mongoose.Schema({
 });
 
 const Message = mongoose.model('Message', messageSchema);
+
+
+// Egzanp ak Express + Pusher oswa Socket.io
+app.post('/message', async (req, res) => {
+  const { sender, content } = req.body;
+
+  try {
+    const newMsg = new Message({ sender, content });
+    await newMsg.save();
+    res.status(201).json({ message: "Mesaj sove ak siksè ✅" });
+  } catch (err) {
+    res.status(500).json({ error: "Erè pandan anrejistreman mesaj ❌" });
+  }
+});
