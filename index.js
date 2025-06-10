@@ -9,13 +9,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔗 Koneksyon ak MongoDB
-mongoose.connect("mongodb+srv://adminfobas:Selvandieu509ranise@fobas-chat.rxmfd4k.mongodb.net/fobas_chat_db?retryWrites=true&w=majority&appName=fobas-chat", {
+require('dotenv').config(); // Asire li monte premye
+
+// 🔗 Koneksyon ak MongoDB (an sekirite)
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
 .then(() => console.log("✅ MongoDB konekte avèk siksè !"))
 .catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
+
 
 // 🔧 Definisyon modèl pou mesaj
 const messageSchema = new mongoose.Schema({
