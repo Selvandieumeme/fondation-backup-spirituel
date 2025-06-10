@@ -90,3 +90,47 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Sèvè ap koute sou pò ${PORT}`);
 });
+
+
+
+  // 📥 Dashboard admin pou wè tout mesaj yo
+app.get("/admin", async (req, res) => {
+  try {
+    const messages = await Message.find().sort({ timestamp: -1 }); // Desann lòd tan
+    let html = `
+      <html>
+        <head>
+          <title>Admin Dashboard</title>
+          <style>
+            body { font-family: Arial; background: #f7f7f7; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 10px; border: 1px solid #ccc; }
+            th { background-color: #4CAF50; color: white; }
+            tr:nth-child(even) { background-color: #f2f2f2; }
+          </style>
+        </head>
+        <body>
+          <h2>📊 Mesaj ki sove</h2>
+          <table>
+            <tr>
+              <th>Expediteur</th>
+              <th>Contenu</th>
+              <th>Lè li voye</th>
+            </tr>
+    `;
+    messages.forEach(msg => {
+      html += `
+        <tr>
+          <td>${msg.sender}</td>
+          <td>${msg.content}</td>
+          <td>${new Date(msg.timestamp).toLocaleString()}</td>
+        </tr>
+      `;
+    });
+    html += `</table></body></html>`;
+    res.send(html);
+  } catch (err) {
+    console.error("❌ Erè admin dashboard:", err);
+    res.status(500).send("Pa kapab chaje mesaj yo.");
+  }
+});
