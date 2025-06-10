@@ -50,3 +50,14 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Sèvè ap koute sou pò ${PORT}`);
 });
+
+const mongoose = require('mongoose');
+
+// Koneksyon ak MongoDB Atlas
+mongoose.connect("mongodb+srv://adminfobas:Selvandieu509ranise@fobas-chat.rxmfd4k.mongodb.net/fobas_chat_db?retryWrites=true&w=majority&appName=fobas-chat", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("✅ MongoDB konekte avèk siksè !"))
+.catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
+
