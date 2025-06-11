@@ -1,4 +1,5 @@
-require('dotenv').config(); // Pou .env
+require('dotenv').config(); // Fè sa yon sèl fwa an tèt
+
 const express = require("express");
 const Pusher = require("pusher");
 const cors = require("cors");
@@ -9,8 +10,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-require('dotenv').config(); // Asire li monte premye
-
 // 🔗 Koneksyon ak MongoDB (an sekirite)
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -19,13 +18,12 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log("✅ MongoDB konekte avèk siksè !"))
 .catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
 
-
-// 🔧 Definisyon modèl pou mesaj
+// 🔧 Definisyon modèl pou mesaj ak timestamps otomatik
 const messageSchema = new mongoose.Schema({
-  sender: String,
-  content: String,
-  timestamp: { type: Date, default: Date.now }
-});
+  sender: { type: String, required: true },
+  content: { type: String, required: true }
+}, { timestamps: true }); // createdAt ak updatedAt otomatik
+
 const Message = mongoose.model('Message', messageSchema);
 
 // 🔐 Pusher konfig
@@ -37,14 +35,17 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-// ✅ Sove mesaj ak fichye + voye sou Pusher
+// --- Route pou sove mesaj nan fichye ak voye sou Pusher ---
+// (Kenbe si ou vle logging nan fichye tou)
 app.post("/send", (req, res) => {
   const { message } = req.body;
   if (!message) {
     return res.status(400).json({ error: "Mesaj pa ka vid." });
   }
 
-  pusher.trigger("my-channel", "my-event", { message });
+  pusher.trigger("my-channel", "my-event", { message }).catch(err => {
+    console.error("❌ Erè Pusher trigger:", err);
+  });
 
   const logMessage = `[${new Date().toISOString()}] ${message}\n`;
   fs.appendFile("chat-log.txt", logMessage, err => {
@@ -58,45 +59,44 @@ app.post("/send", (req, res) => {
   });
 });
 
-// ✅ Sove mesaj ak MongoDB + voye sou Pusher tou
+// --- Route pou sove mesaj nan MongoDB epi voye sou Pusher ---
 app.post('/message', async (req, res) => {
   const { sender, content } = req.body;
+
+  if (!sender || !content) {
+    return res.status(400).json({ error: "Sender ak content obligatwa." });
+  }
 
   try {
     const newMsg = new Message({ sender, content });
     await newMsg.save();
 
-    // Voye sou Pusher si ou vle
     pusher.trigger("chat-channel", "new-message", {
       sender,
       content,
-      timestamp: newMsg.timestamp
+      timestamp: newMsg.createdAt
+    }).catch(err => {
+      console.error("❌ Erè Pusher trigger:", err);
     });
 
     res.status(201).json({ message: "Mesaj sove ak siksè ✅" });
   } catch (err) {
-    console.error("❌ Erè:", err);
+    console.error("❌ Erè pandan anrejistreman mesaj:", err);
     res.status(500).json({ error: "Erè pandan anrejistreman mesaj" });
   }
 });
 
-// 🧪 Tès route
+// --- Route tès ---
 app.get("/", (req, res) => {
   res.send("Serve a ap mache");
 });
 
-// 🚀 Kòmanse sèvè a
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Sèvè ap koute sou pò ${PORT}`);
-});
-
-
-
-  // 📥 Dashboard admin pou wè tout mesaj yo
+// --- Dashboard admin pou wè tout mesaj yo ---
+// TODO: ajoute otantifikasyon si prod
 app.get("/admin", async (req, res) => {
   try {
-    const messages = await Message.find().sort({ timestamp: -1 }); // Desann lòd tan
+    const messages = await Message.find().sort({ createdAt: -1 });
+
     let html = `
       <html>
         <head>
@@ -118,19 +118,39 @@ app.get("/admin", async (req, res) => {
               <th>Lè li voye</th>
             </tr>
     `;
+
     messages.forEach(msg => {
       html += `
         <tr>
-          <td>${msg.sender}</td>
-          <td>${msg.content}</td>
-          <td>${new Date(msg.timestamp).toLocaleString()}</td>
+          <td>${escapeHtml(msg.sender)}</td>
+          <td>${escapeHtml(msg.content)}</td>
+          <td>${new Date(msg.createdAt).toLocaleString()}</td>
         </tr>
       `;
     });
+
     html += `</table></body></html>`;
+
     res.send(html);
   } catch (err) {
     console.error("❌ Erè admin dashboard:", err);
     res.status(500).send("Pa kapab chaje mesaj yo.");
   }
+});
+
+// --- Fonksyon pou evite XSS nan admin ---
+function escapeHtml(text) {
+  if (!text) return "";
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// --- Kòmanse sèvè a ---
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Sèvè ap koute sou pò ${PORT}`);
 });
