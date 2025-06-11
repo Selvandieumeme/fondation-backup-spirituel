@@ -1,5 +1,4 @@
-require('dotenv').config(); // Fè sa yon sèl fwa an tèt
-
+﻿require('dotenv').config(); // Fè sa yon sèl fwa an tèt
 
 // 👇 Test si .env byen chaje
 console.log("MONGODB_URI =>", process.env.MONGODB_URI);
