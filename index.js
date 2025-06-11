@@ -18,13 +18,13 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log("✅ MongoDB konekte avèk siksè !"))
 .catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
 
-// 🔧 Definisyon modèl pou mesaj ak timestamps otomatik
+// ✅ DEFINISYON SCHEMA & MODÈL LA — bon plas!
 const messageSchema = new mongoose.Schema({
   sender: { type: String, required: true },
   content: { type: String, required: true }
-}, { timestamps: true }); // createdAt ak updatedAt otomatik
+}, { timestamps: true }); // `createdAt` ak `updatedAt`
 
-const Message = mongoose.model('Message', messageSchema);
+const Message = mongoose.model("Message", messageSchema);
 
 // 🔐 Pusher konfig
 const pusher = new Pusher({
@@ -44,7 +44,6 @@ function basicAuth(req, res, next) {
     return res.status(401).send('Otorizasyon obligatwa');
   }
 
-  // Dekode Basic Auth header (Basic base64(username:password))
   const base64Credentials = authHeader.split(' ')[1];
   const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
   const [username, password] = credentials.split(':');
@@ -53,7 +52,7 @@ function basicAuth(req, res, next) {
     username === process.env.ADMIN_USER &&
     password === process.env.ADMIN_PASS
   ) {
-    next(); // Otantifikasyon OK, kontinye
+    next();
   } else {
     res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
     return res.status(401).send('Non itilizatè oswa modpas pa kòrèk');
@@ -61,7 +60,6 @@ function basicAuth(req, res, next) {
 }
 
 // --- Route pou sove mesaj nan fichye ak voye sou Pusher ---
-// (Kenbe si ou vle logging nan fichye tou)
 app.post("/send", (req, res) => {
   const { message } = req.body;
   if (!message) {
@@ -72,7 +70,7 @@ app.post("/send", (req, res) => {
     console.error("❌ Erè Pusher trigger:", err);
   });
 
-  const logMessage = [${new Date().toISOString()}] ${message}\n;
+  const logMessage = `[${new Date().toISOString()}] ${message}\n`;
   fs.appendFile("chat-log.txt", logMessage, err => {
     if (err) {
       console.error("❌ Echèk pou sove mesaj:", err);
@@ -116,47 +114,12 @@ app.get("/", (req, res) => {
   res.send("Serve a ap mache");
 });
 
-
-// Route admin pou wè tout mesaj ki sove yo
-app.get("/admin", async (req, res) => {
-  try {
-    const messages = await Message.find().sort({ timestamp: -1 });
-    let html = `
-      <html>
-        <head>
-          <title>Admin Chat Log</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            h1 { color: #333; }
-            .message { margin-bottom: 10px; border-bottom: 1px solid #ccc; padding: 5px; }
-            .timestamp { color: gray; font-size: 0.9em; }
-          </style>
-        </head>
-        <body>
-          <h1>Chat Log Admin</h1>
-          ${messages.map(m => `
-            <div class="message">
-              <div><strong>${m.sender}</strong>: ${m.content}</div>
-              <div class="timestamp">${new Date(m.timestamp).toLocaleString()}</div>
-            </div>
-          `).join('')}
-        </body>
-      </html>
-    `;
-    res.send(html);
-  } catch (err) {
-    res.status(500).send("Gen yon erè lè w ap chaje mesaj yo.");
-  }
-});
-
-
-// --- Dashboard admin pou wè tout mesaj yo ---
-// Middleware basicAuth la aplike pou pwoteje route admin lan
+// --- Dashboard admin pou wè tout mesaj yo (pwoteje) ---
 app.get("/admin", basicAuth, async (req, res) => {
   try {
     const messages = await Message.find().sort({ createdAt: -1 });
 
-    let html = 
+    let html = `
       <html>
         <head>
           <title>Admin Dashboard</title>
@@ -176,19 +139,23 @@ app.get("/admin", basicAuth, async (req, res) => {
               <th>Contenu</th>
               <th>Lè li voye</th>
             </tr>
-    ;
+    `;
 
     messages.forEach(msg => {
-      html += 
+      html += `
         <tr>
           <td>${escapeHtml(msg.sender)}</td>
           <td>${escapeHtml(msg.content)}</td>
           <td>${new Date(msg.createdAt).toLocaleString()}</td>
         </tr>
-      ;
+      `;
     });
 
-    html += </table></body></html>;
+    html += `
+          </table>
+        </body>
+      </html>
+    `;
 
     res.send(html);
   } catch (err) {
@@ -211,5 +178,5 @@ function escapeHtml(text) {
 // --- Kòmanse sèvè a ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(🚀 Sèvè ap koute sou pò ${PORT});
+  console.log(`🚀 Sèvè ap koute sou pò ${PORT}`);
 });
