@@ -1,7 +1,7 @@
 require('dotenv').config(); // Fè sa yon sèl fwa an tèt
 
 
-/ 👇 Test si .env byen chaje
+// 👇 Test si .env byen chaje
 console.log("MONGO_URI =>", process.env.MONGO_URI);
 
 const express = require("express");
