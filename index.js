@@ -116,6 +116,40 @@ app.get("/", (req, res) => {
   res.send("Serve a ap mache");
 });
 
+
+// Route admin pou wè tout mesaj ki sove yo
+app.get("/admin", async (req, res) => {
+  try {
+    const messages = await Message.find().sort({ timestamp: -1 });
+    let html = `
+      <html>
+        <head>
+          <title>Admin Chat Log</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            h1 { color: #333; }
+            .message { margin-bottom: 10px; border-bottom: 1px solid #ccc; padding: 5px; }
+            .timestamp { color: gray; font-size: 0.9em; }
+          </style>
+        </head>
+        <body>
+          <h1>Chat Log Admin</h1>
+          ${messages.map(m => `
+            <div class="message">
+              <div><strong>${m.sender}</strong>: ${m.content}</div>
+              <div class="timestamp">${new Date(m.timestamp).toLocaleString()}</div>
+            </div>
+          `).join('')}
+        </body>
+      </html>
+    `;
+    res.send(html);
+  } catch (err) {
+    res.status(500).send("Gen yon erè lè w ap chaje mesaj yo.");
+  }
+});
+
+
 // --- Dashboard admin pou wè tout mesaj yo ---
 // Middleware basicAuth la aplike pou pwoteje route admin lan
 app.get("/admin", basicAuth, async (req, res) => {
