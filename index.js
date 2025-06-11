@@ -2,7 +2,7 @@ require('dotenv').config(); // Fè sa yon sèl fwa an tèt
 
 
 // 👇 Test si .env byen chaje
-console.log("MONGO_URI =>", process.env.MONGO_URI);
+console.log("MONGODB_URI =>", process.env.MONGODB_URI);
 
 const express = require("express");
 const Pusher = require("pusher");
@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔗 Koneksyon ak MongoDB (an sekirite)
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
