@@ -35,6 +35,31 @@ const pusher = new Pusher({
   useTLS: true
 });
 
+// --- Middleware pou Basic Auth sou route admin ---
+function basicAuth(req, res, next) {
+  const authHeader = req.headers['authorization'];
+
+  if (!authHeader) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+    return res.status(401).send('Otorizasyon obligatwa');
+  }
+
+  // Dekode Basic Auth header (Basic base64(username:password))
+  const base64Credentials = authHeader.split(' ')[1];
+  const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+  const [username, password] = credentials.split(':');
+
+  if (
+    username === process.env.ADMIN_USER &&
+    password === process.env.ADMIN_PASS
+  ) {
+    next(); // Otantifikasyon OK, kontinye
+  } else {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+    return res.status(401).send('Non itilizatè oswa modpas pa kòrèk');
+  }
+}
+
 // --- Route pou sove mesaj nan fichye ak voye sou Pusher ---
 // (Kenbe si ou vle logging nan fichye tou)
 app.post("/send", (req, res) => {
@@ -47,7 +72,7 @@ app.post("/send", (req, res) => {
     console.error("❌ Erè Pusher trigger:", err);
   });
 
-  const logMessage = `[${new Date().toISOString()}] ${message}\n`;
+  const logMessage = [${new Date().toISOString()}] ${message}\n;
   fs.appendFile("chat-log.txt", logMessage, err => {
     if (err) {
       console.error("❌ Echèk pou sove mesaj:", err);
@@ -92,12 +117,12 @@ app.get("/", (req, res) => {
 });
 
 // --- Dashboard admin pou wè tout mesaj yo ---
-// TODO: ajoute otantifikasyon si prod
-app.get("/admin", async (req, res) => {
+// Middleware basicAuth la aplike pou pwoteje route admin lan
+app.get("/admin", basicAuth, async (req, res) => {
   try {
     const messages = await Message.find().sort({ createdAt: -1 });
 
-    let html = `
+    let html = 
       <html>
         <head>
           <title>Admin Dashboard</title>
@@ -117,19 +142,19 @@ app.get("/admin", async (req, res) => {
               <th>Contenu</th>
               <th>Lè li voye</th>
             </tr>
-    `;
+    ;
 
     messages.forEach(msg => {
-      html += `
+      html += 
         <tr>
           <td>${escapeHtml(msg.sender)}</td>
           <td>${escapeHtml(msg.content)}</td>
           <td>${new Date(msg.createdAt).toLocaleString()}</td>
         </tr>
-      `;
+      ;
     });
 
-    html += `</table></body></html>`;
+    html += </table></body></html>;
 
     res.send(html);
   } catch (err) {
@@ -152,5 +177,5 @@ function escapeHtml(text) {
 // --- Kòmanse sèvè a ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Sèvè ap koute sou pò ${PORT}`);
+  console.log(🚀 Sèvè ap koute sou pò ${PORT});
 });
