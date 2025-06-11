@@ -70,16 +70,15 @@ app.post("/send", (req, res) => {
     console.error("❌ Erè Pusher trigger:", err);
   });
 
-  const logMessage = `[${new Date().toISOString()}] ${message}\n`;
-  fs.appendFile("chat-log.txt", logMessage, err => {
-    if (err) {
-      console.error("❌ Echèk pou sove mesaj:", err);
-      return res.status(500).json({ sent: false, error: "Pa kapab sove mesaj." });
-    }
-
-    console.log("✅ Mesaj sovgade nan chat-log.txt");
+ const logMessage = `[${new Date().toISOString()}] ${message}\n`;
+fs.appendFile("chat-log.txt", logMessage, err => {
+  if (err) {
+    console.error("❌ Echèk pou sove mesaj:", err);
+    return res.status(500).json({ sent: false, error: "Pa kapab sove mesaj." });
+  } else {
+    console.log("Mesaj la sove avèk siksè nan chat-log.txt");
     res.status(200).json({ sent: true });
-  });
+  }
 });
 
 // --- Route pou sove mesaj nan MongoDB epi voye sou Pusher ---
