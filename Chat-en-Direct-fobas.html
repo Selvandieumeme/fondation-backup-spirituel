@@ -131,7 +131,6 @@
       <!-- Antre mesaj + bouton -->
       <div class="form-group">
         <input type="text" id="mesaj" placeholder="Ekri mesaj ou...">
-        <!-- ✅ KORÈKSYON 1: Nou mete id="btnVoye" -->
         <button id="btnVoye" onclick="voye()">Voye</button>
         <button class="btn-clear" onclick="efaseTout()">Efase tout</button>
       </div>
@@ -166,7 +165,6 @@
         return;
       }
 
-      // ✅ KORÈKSYON 2: Disable bouton an ak id li
       document.getElementById("btnVoye").disabled = true;
 
       localStorage.setItem("fobas_username", non);
@@ -174,7 +172,7 @@
       const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       const safeMesaj = netwaye(mesaj);
-      const konbine = [${timestamp}] ${non}: ${safeMesaj};
+      const konbine = `[${timestamp}] ${non}: ${safeMesaj}`;
 
       fetch("https://chat-en-direct-fobas.onrender.com/send", {
         method: "POST",
@@ -193,7 +191,6 @@
         document.getElementById("btnVoye").disabled = false;
       });
 
-      // ✅ ChatGPT Bot lokal: repons otomatik
       reponnBot(mesaj);
     }
 
@@ -209,12 +206,9 @@
       const isAtBottom = list.scrollHeight - list.scrollTop <= list.clientHeight + 50;
 
       const newMessage = document.createElement("div");
-
-      // ✅ KORÈKSYON 3: Asire ou itilize textContent
       newMessage.textContent = data.message;
       list.appendChild(newMessage);
 
-      // ✅ KORÈKSYON 4: Scroll otomatik
       if (isAtBottom) {
         list.scrollTop = list.scrollHeight;
       }
@@ -222,7 +216,6 @@
       document.getElementById("messageSound").play().catch(() => {});
     });
 
-    // ✅ KORÈKSYON 5: Bot lokal ki reponn ak fraz senp
     function reponnBot(mesajUser) {
       const reponsSenp = {
         "bonjou": "Bonjou! Kijan ou ye jodi a?",
@@ -238,9 +231,8 @@
       if (repons) {
         const now = new Date();
         const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const botMessage = [${timestamp}] BOT Fobas: ${reponsSenp[repons]};
+        const botMessage = `[${timestamp}] BOT Fobas: ${reponsSenp[repons]}`;
 
-        // Simile repons bot sou menm kanal
         fetch("https://chat-en-direct-fobas.onrender.com/send", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
