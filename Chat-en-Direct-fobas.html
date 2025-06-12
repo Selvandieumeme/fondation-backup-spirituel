@@ -5,41 +5,52 @@
   <title>Chat en Direct Fobas</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ... (CSS deja la) ... */
-
-    /* STYLE POU TYPING NOTIF */
     #typingIndicator {
       font-style: italic;
       color: gray;
-      margin-bottom: 5px;
+      margin-top: 4px;
     }
   </style>
 </head>
 <body>
-  <!-- ... (HEADER & CHAT container deja la) ... -->
 
-  <div class="chat-container">
-    <!-- ... -->
-    <div id="typingIndicator"></div> <!-- 👉 typing notif -->
-    <div id="messageList"></div>
-    <!-- ... -->
-  </div>
+  <header>
+    <h1>Byenveni sou Chat la Fobas</h1>
+  </header>
 
-  <!-- ... (FOOTER, AUDIO, PUSHER SCRIPT) ... -->
+  <main>
+    <div class="chat-container">
+      <div class="chat-header">
+        <input type="text" id="username" placeholder="Non ou" />
+      </div>
+
+      <div class="chat-messages">
+        <div id="messageList"></div>
+        <div id="typingIndicator"></div>
+      </div>
+
+      <div class="chat-input">
+        <textarea id="mesaj" placeholder="Ekri mesaj ou la..."></textarea>
+        <button id="btnVoye" onclick="voye()">Voye</button>
+        <button onclick="efaseTout()">Efase</button>
+      </div>
+    </div>
+  </main>
+
+  <audio id="messageSound" src="notification.mp3" preload="auto"></audio>
+
   <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
   <script>
     function netwaye(mesaj) {
       return mesaj.replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    // konvèti :smile: :heart: etc an emoji
     function withEmoji(text) {
       return text
         .replace(/:smile:/g, "😄")
         .replace(/:heart:/g, "❤️")
         .replace(/:thumbsup:/g, "👍")
         .replace(/:cry:/g, "😢");
-      // ajoute plis swadizan jan ou vle
     }
 
     window.onload = () => {
@@ -47,17 +58,23 @@
       if (savedName) document.getElementById("username").value = savedName;
     };
 
-    const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
+    const pusher = new Pusher("5c6d93290538e3d2fbda", {
+      cluster: "us2",
+      authEndpoint: "/pusher/auth",
+      forceTLS: true
+    });
+
     const channel = pusher.subscribe("my-channel");
 
+    // Typing notification
     let typingTimeout;
-    document.getElementById("mesaj").addEventListener("input", () => {
+    const inputMesaj = document.getElementById("mesaj");
+    inputMesaj.addEventListener("input", () => {
       channel.trigger("client-typing", { typing: true });
       clearTimeout(typingTimeout);
-      typingTimeout = setTimeout(
-        () => channel.trigger("client-typing", { typing: false }),
-        1000
-      );
+      typingTimeout = setTimeout(() => {
+        channel.trigger("client-typing", { typing: false });
+      }, 1000);
     });
 
     channel.bind("client-typing", data => {
@@ -68,7 +85,10 @@
     function voye() {
       const non = document.getElementById("username").value.trim();
       let mesaj = document.getElementById("mesaj").value.trim();
-      if (!non || !mesaj) { alert("Tanpri mete non ou epi ekri yon mesaj."); return; }
+      if (!non || !mesaj) {
+        alert("Tanpri mete non ou epi mesaj ou.");
+        return;
+      }
 
       document.getElementById("btnVoye").disabled = true;
       localStorage.setItem("fobas_username", non);
@@ -84,12 +104,15 @@
       })
       .then(res => res.json())
       .then(data => {
-        if (data.sent) document.getElementById("mesaj").value = "";
-        else alert("Mesaj la pa rive.");
+        if (data.sent) {
+          document.getElementById("mesaj").value = "";
+        } else {
+          alert("Mesaj la pa rive.");
+        }
         document.getElementById("btnVoye").disabled = false;
       })
       .catch(() => {
-        alert("Gen yon erè sou rezo a."); 
+        alert("Erè rezo.");
         document.getElementById("btnVoye").disabled = false;
       });
 
@@ -107,15 +130,15 @@
       div.textContent = withEmoji(data.message);
       list.appendChild(div);
       if (wasAtBottom) list.scrollTop = list.scrollHeight;
-      document.getElementById("messageSound").play().catch(()=>{});
+      document.getElementById("messageSound").play().catch(() => {});
     });
 
     function reponnBot(mesajUser) {
       const r = {
-        "bonjour":"Bonjou! Kijan ou ye?",
-        "ki jan ou ye":"Mwen byen, mèsi!",
-        "mèsi":"Ou byenveni!",
-        "ok":"Dakò!"
+        "bonjour": "Bonjou! Kijan ou ye?",
+        "ki jan ou ye": "Mwen byen, mèsi!",
+        "mèsi": "Ou byenveni!",
+        "ok": "Dakò!"
       };
       const msg = mesajUser.toLowerCase();
       for (let k in r) {
