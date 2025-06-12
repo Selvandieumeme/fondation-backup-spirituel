@@ -5,152 +5,41 @@
   <title>Chat en Direct Fobas</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* CSS la rete menm jan — pa gen modifikasyon ki nesesè isit la */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-    header, footer {
-      background-color: #2c3e50;
-      color: white;
-      padding: 15px 20px;
-      text-align: center;
-    }
-    nav ul {
-      list-style: none;
-      padding: 0;
-    }
-    nav ul li {
-      display: inline;
-      margin-right: 15px;
-    }
-    nav ul li a {
-      color: white;
-      text-decoration: none;
-    }
-    nav ul li a.active {
-      font-weight: bold;
-      text-decoration: underline;
-    }
-    .chat-container {
-      max-width: 700px;
-      margin: 40px auto;
-      background-color: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-    .chat-container h2 {
-      text-align: center;
-      margin-top: 0;
-    }
-    #messageList {
-      border: 1px solid #ccc;
-      padding: 15px;
-      height: 300px;
-      overflow-y: auto;
-      margin-bottom: 20px;
-      background: #f2f2f2;
-      border-radius: 5px;
-    }
-    #messageList div {
-      margin-bottom: 12px;
-      padding: 10px;
-      background: #e8f0fe;
-      border-left: 4px solid #3498db;
-      border-radius: 5px;
-      font-size: 14px;
-      line-height: 1.4;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    input[type="text"] {
-      padding: 10px;
-      width: calc(100% - 20px);
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    #mesaj {
-      width: 70%;
-      margin-right: 5px;
-    }
-    #username {
-      width: 50%;
-      margin-bottom: 10px;
-    }
-    button {
-      padding: 10px 20px;
-      border: none;
-      background-color: #3498db;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #2980b9;
-    }
-    .btn-clear {
-      background-color: #e74c3c;
-      margin-left: 10px;
-    }
-    .btn-clear:hover {
-      background-color: #c0392b;
+    /* ... (CSS deja la) ... */
+
+    /* STYLE POU TYPING NOTIF */
+    #typingIndicator {
+      font-style: italic;
+      color: gray;
+      margin-bottom: 5px;
     }
   </style>
 </head>
 <body>
+  <!-- ... (HEADER & CHAT container deja la) ... -->
 
-  <!-- HEADER -->
-  <header>
-    <h1>Fondation Backup Spirituel</h1>
-    <nav>
-      <ul>
-        <li><a href="index.html">Accueil</a></li>
-        <li><a href="Chat-en-Direct-fobas.html" class="active">Chat en Direct Fobas</a></li>
-      </ul>
-    </nav>
-  </header>
+  <div class="chat-container">
+    <!-- ... -->
+    <div id="typingIndicator"></div> <!-- 👉 typing notif -->
+    <div id="messageList"></div>
+    <!-- ... -->
+  </div>
 
-  <!-- ZÒN CHAT -->
-  <main>
-    <div class="chat-container">
-      <h2>Chat en Direct Fobas</h2>
-      <p>Diskite an dirèk ak lòt vizitè yo!</p>
-
-      <!-- Zòn mesaj yo -->
-      <div id="messageList"></div>
-
-      <!-- Non itilizatè -->
-      <div class="form-group">
-        <input type="text" id="username" placeholder="Non w la (obligatwa)">
-      </div>
-
-      <!-- Antre mesaj + bouton -->
-      <div class="form-group">
-        <input type="text" id="mesaj" placeholder="Ekri mesaj ou...">
-        <!-- ✅ KORÈKSYON 1: Nou mete id="btnVoye" -->
-        <button id="btnVoye" onclick="voye()">Voye</button>
-        <button class="btn-clear" onclick="efaseTout()">Efase tout</button>
-      </div>
-    </div>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <p>&copy; 2025 Fondation Backup Spirituel - Tout dwa rezève</p>
-  </footer>
-
-  <!-- SON MP3 -->
-  <audio id="messageSound" src="https://notificationsounds.com/storage/sounds/file-sounds-1152-pristine.mp3" preload="auto"></audio>
-
-  <!-- SCRIPT PUSHER + CHAT -->
+  <!-- ... (FOOTER, AUDIO, PUSHER SCRIPT) ... -->
   <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
   <script>
     function netwaye(mesaj) {
       return mesaj.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // konvèti :smile: :heart: etc an emoji
+    function withEmoji(text) {
+      return text
+        .replace(/:smile:/g, "😄")
+        .replace(/:heart:/g, "❤️")
+        .replace(/:thumbsup:/g, "👍")
+        .replace(/:cry:/g, "😢");
+      // ajoute plis swadizan jan ou vle
     }
 
     window.onload = () => {
@@ -158,28 +47,40 @@
       if (savedName) document.getElementById("username").value = savedName;
     };
 
+    const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
+    const channel = pusher.subscribe("my-channel");
+
+    let typingTimeout;
+    document.getElementById("mesaj").addEventListener("input", () => {
+      channel.trigger("client-typing", { typing: true });
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(
+        () => channel.trigger("client-typing", { typing: false }),
+        1000
+      );
+    });
+
+    channel.bind("client-typing", data => {
+      const el = document.getElementById("typingIndicator");
+      el.textContent = data.typing ? "Yon moun ap ekri..." : "";
+    });
+
     function voye() {
       const non = document.getElementById("username").value.trim();
-      const mesaj = document.getElementById("mesaj").value.trim();
-      if (non === "" || mesaj === "") {
-        alert("Tanpri mete non ou epi ekri yon mesaj.");
-        return;
-      }
+      let mesaj = document.getElementById("mesaj").value.trim();
+      if (!non || !mesaj) { alert("Tanpri mete non ou epi ekri yon mesaj."); return; }
 
-      // ✅ KORÈKSYON 2: Disable bouton an ak id li
       document.getElementById("btnVoye").disabled = true;
-
       localStorage.setItem("fobas_username", non);
-      const now = new Date();
-      const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const now = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
 
-      const safeMesaj = netwaye(mesaj);
-      const konbine = `[${timestamp}] ${non}: ${safeMesaj}`;
+      mesaj = withEmoji(mesaj);
+      const combo = `[${now}] ${non}: ${netwaye(mesaj)}`;
 
-      fetch("https://chat-en-direct-fobas.onrender.com/send", {
+      fetch("/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: konbine })
+        body: JSON.stringify({ message: combo })
       })
       .then(res => res.json())
       .then(data => {
@@ -187,13 +88,11 @@
         else alert("Mesaj la pa rive.");
         document.getElementById("btnVoye").disabled = false;
       })
-      .catch(error => {
-        console.error("Erè:", error);
-        alert("Gen yon erè sou rezo a.");
+      .catch(() => {
+        alert("Gen yon erè sou rezo a."); 
         document.getElementById("btnVoye").disabled = false;
       });
 
-      // ✅ ChatGPT Bot lokal: repons otomatik
       reponnBot(mesaj);
     }
 
@@ -201,54 +100,36 @@
       document.getElementById("messageList").innerHTML = "";
     }
 
-    const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
-    const channel = pusher.subscribe("my-channel");
-
-    channel.bind("my-event", function(data) {
+    channel.bind("my-event", data => {
       const list = document.getElementById("messageList");
-      const isAtBottom = list.scrollHeight - list.scrollTop <= list.clientHeight + 50;
-
-      const newMessage = document.createElement("div");
-
-      // ✅ KORÈKSYON 3: Asire ou itilize textContent
-      newMessage.textContent = data.message;
-      list.appendChild(newMessage);
-
-      // ✅ KORÈKSYON 4: Scroll otomatik
-      if (isAtBottom) {
-        list.scrollTop = list.scrollHeight;
-      }
-
-      document.getElementById("messageSound").play().catch(() => {});
+      const wasAtBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 5;
+      const div = document.createElement("div");
+      div.textContent = withEmoji(data.message);
+      list.appendChild(div);
+      if (wasAtBottom) list.scrollTop = list.scrollHeight;
+      document.getElementById("messageSound").play().catch(()=>{});
     });
 
-    // ✅ KORÈKSYON 5: Bot lokal ki reponn ak fraz senp
     function reponnBot(mesajUser) {
-      const reponsSenp = {
-        "bonjou": "Bonjou! Kijan ou ye jodi a?",
-        "ki jan ou ye": "Mwen byen, mèsi! E ou menm?",
-        "mèsi": "Ou byenveni!",
-        "ok": "Dakò!",
-        "ki sa w fè": "M se yon chatbot Fobas pou ede w diskite ak lòt moun."
+      const r = {
+        "bonjour":"Bonjou! Kijan ou ye?",
+        "ki jan ou ye":"Mwen byen, mèsi!",
+        "mèsi":"Ou byenveni!",
+        "ok":"Dakò!"
       };
-
-      const mesajMini = mesajUser.trim().toLowerCase();
-      const repons = Object.keys(reponsSenp).find(cle => mesajMini.includes(cle));
-
-      if (repons) {
-        const now = new Date();
-        const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const botMessage = `[${timestamp}] BOT Fobas: ${reponsSenp[repons]}`;
-
-        // Simile repons bot sou menm kanal
-        fetch("https://chat-en-direct-fobas.onrender.com/send", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: botMessage })
-        });
+      const msg = mesajUser.toLowerCase();
+      for (let k in r) {
+        if (msg.includes(k)) {
+          const now = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+          fetch("/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: `[${now}] BOT: ${r[k]}` })
+          });
+          return;
+        }
       }
     }
   </script>
-
 </body>
 </html>
