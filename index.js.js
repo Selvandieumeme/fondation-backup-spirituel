@@ -14,10 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔗 Koneksyon ak MongoDB (an sekirite)
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGODB_URI)
 .then(() => console.log("✅ MongoDB konekte avèk siksè !"))
 .catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
 
