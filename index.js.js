@@ -68,7 +68,6 @@ app.post("/send", async (req, res) => {
   fs.appendFile("chat-log.txt", logMessage, err => {
     if (err) {
       console.error("❌ Echèk pou sove mesaj:", err);
-      // pa return isi, men nou log li
     }
   });
 
@@ -88,7 +87,7 @@ app.post("/send", async (req, res) => {
   }
 });
 
-// --- Route pou sove mesaj nan MongoDB via JSON --- (si ou bezwen)
+// --- Route pou sove mesaj nan MongoDB via JSON ---
 app.post('/message', async (req, res) => {
   const { sender, content } = req.body;
   if (!sender || !content) {
@@ -118,7 +117,7 @@ app.get("/", (req, res) => {
   res.send("Serve a ap mache");
 });
 
-// --- Dashboard admin ---
+// --- Dashboard admin ak bouton Supprimer + Export CSV ---
 app.get("/admin", basicAuth, async (req, res) => {
   try {
     const messages = await Message.find().sort({ createdAt: -1 });
@@ -130,17 +129,24 @@ app.get("/admin", basicAuth, async (req, res) => {
           th,td { padding:10px; border:1px solid #ccc; }
           th { background:#4CAF50; color:white; }
           tr:nth-child(even){ background:#f2f2f2; }
+          button { padding: 5px 8px; margin-right: 5px; }
         </style>
       </head><body>
         <h2>📊 Mesaj ki sove - Fondation Backup Spirituel</h2>
+        <button onclick="window.location.href='/admin/export'">📥 Exporter CSV</button>
         <table>
-          <tr><th>Expediteur</th><th>Contenu</th><th>Lè li voye</th></tr>`;
+          <tr><th>Expediteur</th><th>Contenu</th><th>Lè li voye</th><th>Aksyon</th></tr>`;
     messages.forEach(msg => {
       html += `
         <tr>
           <td>${escapeHtml(msg.sender)}</td>
           <td>${escapeHtml(msg.content)}</td>
           <td>${new Date(msg.createdAt).toLocaleString()}</td>
+          <td>
+            <form method="POST" action="/admin/delete/${msg._id}" style="display:inline">
+              <button type="submit" onclick="return confirm('Vre ou vle efase?')">Supprimer</button>
+            </form>
+          </td>
         </tr>`;
     });
     html += `</table></body></html>`;
@@ -148,6 +154,37 @@ app.get("/admin", basicAuth, async (req, res) => {
   } catch (err) {
     console.error("❌ Erè admin dashboard:", err);
     res.status(500).send("Pa kapab chaje mesaj yo.");
+  }
+});
+
+// --- Efase yon mesaj pa ID ---
+app.post("/admin/delete/:id", basicAuth, async (req, res) => {
+  try {
+    await Message.findByIdAndDelete(req.params.id);
+    res.redirect("/admin");
+  } catch (e) {
+    console.error("❌ Erè efase mesaj:", e);
+    res.status(500).send("Pa kapab efase mesaj la.");
+  }
+});
+
+// --- Export CSV tout mesaj ---
+app.get("/admin/export", basicAuth, async (req, res) => {
+  try {
+    const messages = await Message.find().sort({ createdAt: -1 });
+    let csv = "sender,content,createdAt\n";
+    messages.forEach(m => {
+      const s = `"${m.sender.replace(/"/g,'""')}"`;
+      const c = `"${m.content.replace(/"/g,'""')}"`;
+      const d = `"${m.createdAt.toISOString()}"`;
+      csv += `${s},${c},${d}\n`;
+    });
+    res.setHeader('Content-disposition', 'attachment; filename=messages.csv');
+    res.set('Content-Type', 'text/csv');
+    res.status(200).send(csv);
+  } catch (e) {
+    console.error("❌ Erè eksport mesaj:", e);
+    res.status(500).send("Erè pandan eksport.");
   }
 });
 
