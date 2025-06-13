@@ -132,7 +132,7 @@ app.get("/admin", basicAuth, async (req, res) => {
           tr:nth-child(even){ background:#f2f2f2; }
         </style>
       </head><body>
-        <h2>📊 Mesaj ki sove</h2>
+        <h2>📊 Mesaj ki sove - Fondation Backup Spirituel</h2>
         <table>
           <tr><th>Expediteur</th><th>Contenu</th><th>Lè li voye</th></tr>`;
     messages.forEach(msg => {
