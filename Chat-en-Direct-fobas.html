@@ -34,6 +34,12 @@
       font-weight: bold;
       text-decoration: underline;
     }
+
+    #logoutBtn {
+      margin-top: 10px;
+      background-color: #e67e22;
+    }
+
     .chat-container {
       max-width: 700px;
       margin: 40px auto;
@@ -112,6 +118,8 @@
         <li><a href="Chat-en-Direct-fobas.html" class="active">Chat en Direct Fobas</a></li>
       </ul>
     </nav>
+    <!-- 🚪 BOUTON LOGOUT -->
+    <button id="logoutBtn">Logout</button>
   </header>
 
   <!-- ZÒN CHAT -->
@@ -240,6 +248,14 @@
         });
       }
     }
+  </script>
+
+  <!-- 🔐 SCRIPT LOGOUT -->
+  <script>
+    document.getElementById('logoutBtn').onclick = () => {
+      localStorage.removeItem('auth_token');
+      window.location.href = 'login.html';
+    };
   </script>
 
 </body>
