@@ -5,46 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chat en Direct - Fobas</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom right, #081a3e, #0f2e5a);
       font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #081a3e, #0f2e5a);
       color: white;
-      height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
 
     .container {
-      width: 95%;
-      max-width: 1200px;
       display: flex;
       flex-wrap: wrap;
+      max-width: 1200px;
+      width: 100%;
+      padding: 20px;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 20px;
     }
 
     .left, .right {
-      background-color: rgba(255, 255, 255, 0.03);
+      background-color: rgba(255, 255, 255, 0.05);
       border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      padding: 25px;
       flex: 1;
       min-width: 300px;
+      margin: 10px;
     }
 
     .left h1 {
-      font-size: 40px;
+      font-size: 35px;
       margin-bottom: 20px;
     }
 
     .buttons {
       display: flex;
-      gap: 15px;
+      gap: 10px;
       margin-bottom: 30px;
+      flex-wrap: wrap;
     }
 
     .buttons button {
@@ -55,14 +60,16 @@
       background: #1a3c89;
       color: white;
       cursor: pointer;
+      flex: 1 1 auto;
     }
 
-    .buttons button:hover {
-      background-color: #2d52a5;
+    .buttons button:nth-child(2) {
+      background: transparent;
+      border: 1px solid white;
     }
 
     .chat-box {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(255, 255, 255, 0.07);
       border-radius: 15px;
       padding: 15px;
     }
@@ -74,21 +81,20 @@
     .message {
       display: flex;
       align-items: center;
-      margin-bottom: 8px;
+      justify-content: space-between;
+      margin-bottom: 10px;
     }
 
     .message i {
-      font-size: 20px;
       margin-right: 10px;
     }
 
     .message span {
-      margin-right: 10px;
       font-weight: bold;
+      margin-right: 10px;
     }
 
     .right input {
-      display: block;
       width: 100%;
       padding: 10px;
       margin-bottom: 15px;
@@ -115,6 +121,7 @@
       border-radius: 30px;
       font-size: 16px;
       cursor: pointer;
+      margin-bottom: 20px;
     }
 
     .seminaire-btn:hover {
@@ -122,19 +129,27 @@
     }
 
     .logo-cadenas {
-      width: 80px;
-      margin-top: 20px;
-      opacity: 0.9;
+      width: 70px;
+      display: block;
+      margin: auto;
     }
 
     .footer {
       width: 100%;
-      text-align: right;
-      margin-top: 40px;
+      text-align: center;
+      margin-top: 30px;
     }
 
-    .footer-logo {
-      width: 200px;
+    .footer img {
+      width: 100px;
+      display: block;
+      margin: 0 auto 10px;
+    }
+
+    .footer strong {
+      font-size: 16px;
+      line-height: 1.4;
+      display: block;
     }
 
     @media (max-width: 768px) {
@@ -143,45 +158,76 @@
         align-items: center;
       }
 
-      .footer {
+      .left h1 {
+        font-size: 28px;
         text-align: center;
+      }
+
+      .buttons {
+        justify-content: center;
+      }
+
+      .chat-box h3 {
+        text-align: center;
+      }
+
+      .footer {
+        margin-top: 40px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .left, .right {
+        padding: 15px;
+      }
+
+      .seminaire-btn {
+        width: 100%;
+      }
+
+      .footer img {
+        width: 80px;
+      }
+
+      .footer strong {
+        font-size: 14px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Left Section -->
+    <!-- Left -->
     <div class="left">
       <h1>Sign in to<br>your account</h1>
       <div class="buttons">
         <button>Sign In</button>
-        <button style="background: transparent; border: 1px solid white;">Sign Up</button>
+        <button>Sign Up</button>
       </div>
       <div class="chat-box">
         <h3>Public Chat</h3>
-        <div class="message"><i>👤</i><span>User1</span> Hello! <span style="margin-left:auto;">14:00</span></div>
-        <div class="message"><i>👤</i><span>User2</span> Hello! <span style="margin-left:auto;">14:00</span></div>
-        <div class="message"><i>👤</i><span>User3</span> Hello! <span style="margin-left:auto;">14:00</span></div>
+        <div class="message"><i>👤</i><span>User1</span> <span style="margin-left:auto;">14:00</span></div>
+        <div class="message"><i>👤</i><span>User2</span> <span style="margin-left:auto;">14:00</span></div>
+        <div class="message"><i>👤</i><span>User3</span> <span style="margin-left:auto;">14:00</span></div>
       </div>
     </div>
 
-    <!-- Right Section -->
+    <!-- Right -->
     <div class="right">
-      <input type="text" placeholder="Email address">
-      <input type="password" placeholder="Password">
+      <input type="email" placeholder="Email address" />
+      <input type="password" placeholder="Password" />
       <div class="checkbox">
-        <input type="checkbox" checked>
+        <input type="checkbox" checked />
         <label>Forgot password?</label>
       </div>
       <button class="seminaire-btn">Séminaire Cyber-sécurité et Piratag</button>
-      <img src="https://cdn-icons-png.flaticon.com/512/942/942833.png" alt="cadenas" class="logo-cadenas">
+      <img src="https://cdn-icons-png.flaticon.com/512/942/942833.png" alt="cadenas" class="logo-cadenas" />
     </div>
 
     <!-- Footer -->
     <div class="footer">
-      <img src="https://cdn-icons-png.flaticon.com/512/869/869869.png" alt="logo soleil" class="footer-logo"><br>
-      <strong style="font-size: 18px;">Foundation<br>Backup Spirituel</strong>
+      <img src="https://cdn-icons-png.flaticon.com/512/869/869869.png" alt="logo soleil">
+      <strong>Foundation<br>Backup Spirituel</strong>
     </div>
   </div>
 </body>
