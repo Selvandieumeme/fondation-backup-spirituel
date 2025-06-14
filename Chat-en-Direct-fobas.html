@@ -104,6 +104,14 @@
       font-size: 14px;
     }
 
+    .seminaire-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
     .seminaire-btn {
       background-color: #2e68ff;
       color: white;
@@ -111,12 +119,16 @@
       padding: 12px 20px;
       border-radius: 8px;
       font-size: 16px;
-      margin-top: 10px;
       cursor: pointer;
     }
 
     .seminaire-btn:hover {
       background-color: #1c4ed8;
+    }
+
+    .lock-icon {
+      width: 60px;
+      height: 60px;
     }
 
     .logo-section {
@@ -125,22 +137,34 @@
     }
 
     .logo-section img {
-      width: 60px;
+      width: 70px;
       margin-bottom: 10px;
     }
 
     .logo-section h2 {
       margin: 0;
       font-weight: normal;
+      line-height: 1.3;
     }
 
     @media screen and (max-width: 768px) {
       body {
         padding: 10px;
       }
+
       .container {
         flex-direction: column;
         padding: 20px;
+      }
+
+      .seminaire-section {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .lock-icon {
+        width: 50px;
+        height: 50px;
       }
     }
   </style>
@@ -169,7 +193,11 @@
         <input type="email" placeholder="Email address" required>
         <input type="password" placeholder="Password" required>
         <label><input type="checkbox" checked> Forgot password?</label>
-        <button class="seminaire-btn">Séminaire Cyber-sécurité et Piratag</button>
+
+        <div class="seminaire-section">
+          <button class="seminaire-btn">Séminaire Cyber-sécurité et Piratag</button>
+          <img src="https://i.ibb.co/GWfXtWc/lock-icon.png" alt="Lock icon" class="lock-icon" />
+        </div>
       </form>
 
       <div class="logo-section">
@@ -180,3 +208,10 @@
   </div>
 </body>
 </html>
+📝 Kisa ki mete ladan l:
+🔒 Kadna ble fonse (lock icon):
+📍 Soti isit: https://i.ibb.co/GWfXtWc/lock-icon.png
+
+☀️ Logo soley la:
+📍 Soti isit: https://i.ibb.co/NpGwKY2/sun-logo.png
+
