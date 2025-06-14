@@ -1,262 +1,182 @@
 <!DOCTYPE html>
-<html lang="ht">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Chat en Direct Fobas</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Accueil - Fondation Backup Spirituel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    /* CSS la rete menm jan — pa gen modifikasyon ki nesesè isit la */
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
       margin: 0;
-      padding: 0;
-    }
-    header, footer {
-      background-color: #2c3e50;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a1f44, #0b2a69);
       color: white;
-      padding: 15px 20px;
-      text-align: center;
-    }
-    nav ul {
-      list-style: none;
-      padding: 0;
-    }
-    nav ul li {
-      display: inline;
-      margin-right: 15px;
-    }
-    nav ul li a {
-      color: white;
-      text-decoration: none;
-    }
-    nav ul li a.active {
-      font-weight: bold;
-      text-decoration: underline;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    #logoutBtn {
-      margin-top: 10px;
-      background-color: #e67e22;
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 1000px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
     }
 
-    .chat-container {
-      max-width: 700px;
-      margin: 40px auto;
-      background-color: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    .left,
+    .right {
+      flex: 1;
+      min-width: 300px;
+      padding: 20px;
     }
-    .chat-container h2 {
-      text-align: center;
-      margin-top: 0;
-    }
-    #messageList {
-      border: 1px solid #ccc;
-      padding: 15px;
-      height: 300px;
-      overflow-y: auto;
+
+    .left h1 {
+      font-size: 36px;
       margin-bottom: 20px;
-      background: #f2f2f2;
-      border-radius: 5px;
     }
-    #messageList div {
-      margin-bottom: 12px;
-      padding: 10px;
-      background: #e8f0fe;
-      border-left: 4px solid #3498db;
-      border-radius: 5px;
-      font-size: 14px;
-      line-height: 1.4;
+
+    .btns {
+      margin-bottom: 40px;
     }
-    .form-group {
-      margin-bottom: 15px;
+
+    .btns button {
+      background-color: #1e3c72;
+      color: white;
+      padding: 10px 25px;
+      margin-right: 15px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
     }
-    input[type="text"] {
-      padding: 10px;
-      width: calc(100% - 20px);
-      border-radius: 5px;
-      border: 1px solid #ccc;
+
+    .btns button:hover {
+      background-color: #355c9c;
     }
-    #mesaj {
-      width: 70%;
-      margin-right: 5px;
+
+    .chat-box {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      max-height: 250px;
     }
-    #username {
-      width: 50%;
+
+    .chat-box h3 {
+      margin-top: 0;
+      font-size: 18px;
       margin-bottom: 10px;
     }
-    button {
-      padding: 10px 20px;
+
+    .chat-message {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .chat-message:last-child {
+      border-bottom: none;
+    }
+
+    .right form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right input[type="email"],
+    .right input[type="password"] {
+      padding: 12px;
+      margin-bottom: 15px;
       border: none;
-      background-color: #3498db;
-      color: white;
       border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .right input::placeholder {
+      color: #999;
+    }
+
+    .right label {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .seminaire-btn {
+      background-color: #2e68ff;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 10px;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #2980b9;
+
+    .seminaire-btn:hover {
+      background-color: #1c4ed8;
     }
-    .btn-clear {
-      background-color: #e74c3c;
-      margin-left: 10px;
+
+    .logo-section {
+      text-align: center;
+      margin-top: 40px;
     }
-    .btn-clear:hover {
-      background-color: #c0392b;
+
+    .logo-section img {
+      width: 60px;
+      margin-bottom: 10px;
+    }
+
+    .logo-section h2 {
+      margin: 0;
+      font-weight: normal;
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      .container {
+        flex-direction: column;
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
-
-  <!-- HEADER -->
-  <header>
-    <h1>Fondation Backup Spirituel</h1>
-    <nav>
-      <ul>
-        <li><a href="index.html">Accueil</a></li>
-        <li><a href="Chat-en-Direct-fobas.html" class="active">Chat en Direct Fobas</a></li>
-      </ul>
-    </nav>
-    <!-- 🚪 BOUTON LOGOUT -->
-    <button id="logoutBtn">Logout</button>
-  </header>
-
-  <!-- ZÒN CHAT -->
-  <main>
-    <div class="chat-container">
-      <h2>Chat en Direct Fobas</h2>
-      <p>Diskite an dirèk ak lòt vizitè yo!</p>
-
-      <!-- Zòn mesaj yo -->
-      <div id="messageList"></div>
-
-      <!-- Non itilizatè -->
-      <div class="form-group">
-        <input type="text" id="username" placeholder="Non w la (obligatwa)">
+  <div class="container">
+    <!-- Left side -->
+    <div class="left">
+      <h1>Sign in to <br>your account</h1>
+      <div class="btns">
+        <button onclick="window.location.href='login.html'">Sign In</button>
+        <button onclick="window.location.href='register.html'">Sign Up</button>
       </div>
 
-      <!-- Antre mesaj + bouton -->
-      <div class="form-group">
-        <input type="text" id="mesaj" placeholder="Ekri mesaj ou...">
-        <button id="btnVoye" onclick="voye()">Voye</button>
-        <button class="btn-clear" onclick="efaseTout()">Efase tout</button>
+      <div class="chat-box">
+        <h3>Public Chat</h3>
+        <div class="chat-message"><span><strong>User1</strong>: Hello!</span><span>14:00</span></div>
+        <div class="chat-message"><span><strong>User2</strong>: Hello!</span><span>14:00</span></div>
+        <div class="chat-message"><span><strong>User3</strong>: Hello!</span><span>14:00</span></div>
       </div>
     </div>
-  </main>
 
-  <!-- FOOTER -->
-  <footer>
-    <p>&copy; 2025 Fondation Backup Spirituel - Tout dwa rezève</p>
-  </footer>
+    <!-- Right side -->
+    <div class="right">
+      <form>
+        <input type="email" placeholder="Email address" required>
+        <input type="password" placeholder="Password" required>
+        <label><input type="checkbox" checked> Forgot password?</label>
+        <button class="seminaire-btn">Séminaire Cyber-sécurité et Piratag</button>
+      </form>
 
-  <!-- SON MP3 -->
-  <audio id="messageSound" src="https://notificationsounds.com/storage/sounds/file-sounds-1152-pristine.mp3" preload="auto"></audio>
-
-  <!-- SCRIPT PUSHER + CHAT -->
-  <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-  <script>
-    function netwaye(mesaj) {
-      return mesaj.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-    window.onload = () => {
-      const savedName = localStorage.getItem("fobas_username");
-      if (savedName) document.getElementById("username").value = savedName;
-    };
-
-    function voye() {
-      const non = document.getElementById("username").value.trim();
-      const mesaj = document.getElementById("mesaj").value.trim();
-      if (non === "" || mesaj === "") {
-        alert("Tanpri mete non ou epi ekri yon mesaj.");
-        return;
-      }
-
-      document.getElementById("btnVoye").disabled = true;
-
-      localStorage.setItem("fobas_username", non);
-      const now = new Date();
-      const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-      const safeMesaj = netwaye(mesaj);
-      const konbine = `[${timestamp}] ${non}: ${safeMesaj}`;
-
-      fetch("https://chat-en-direct-fobas.onrender.com/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: konbine })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.sent) document.getElementById("mesaj").value = "";
-        else alert("Mesaj la pa rive.");
-        document.getElementById("btnVoye").disabled = false;
-      })
-      .catch(error => {
-        console.error("Erè:", error);
-        alert("Gen yon erè sou rezo a.");
-        document.getElementById("btnVoye").disabled = false;
-      });
-
-      reponnBot(mesaj);
-    }
-
-    function efaseTout() {
-      document.getElementById("messageList").innerHTML = "";
-    }
-
-    const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
-    const channel = pusher.subscribe("my-channel");
-
-    channel.bind("my-event", function(data) {
-      const list = document.getElementById("messageList");
-      const isAtBottom = list.scrollHeight - list.scrollTop <= list.clientHeight + 50;
-
-      const newMessage = document.createElement("div");
-      newMessage.textContent = data.message;
-      list.appendChild(newMessage);
-
-      if (isAtBottom) {
-        list.scrollTop = list.scrollHeight;
-      }
-
-      document.getElementById("messageSound").play().catch(() => {});
-    });
-
-    function reponnBot(mesajUser) {
-      const reponsSenp = {
-        "bonjou": "Bonjou! Kijan ou ye jodi a?",
-        "ki jan ou ye": "Mwen byen, mèsi! E ou menm?",
-        "mèsi": "Ou byenveni!",
-        "ok": "Dakò!",
-        "ki sa w fè": "M se yon chatbot Fobas pou ede w diskite ak lòt moun."
-      };
-
-      const mesajMini = mesajUser.trim().toLowerCase();
-      const repons = Object.keys(reponsSenp).find(cle => mesajMini.includes(cle));
-
-      if (repons) {
-        const now = new Date();
-        const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const botMessage = `[${timestamp}] BOT Fobas: ${reponsSenp[repons]}`;
-
-        fetch("https://chat-en-direct-fobas.onrender.com/send", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: botMessage })
-        });
-      }
-    }
-  </script>
-
-  <!-- 🔐 SCRIPT LOGOUT -->
-  <script>
-    document.getElementById('logoutBtn').onclick = () => {
-      localStorage.removeItem('auth_token');
-      window.location.href = 'login.html';
-    };
-  </script>
-
+      <div class="logo-section">
+        <img src="https://i.ibb.co/NpGwKY2/sun-logo.png" alt="Logo Fondation" />
+        <h2>Foundation<br>Backup Spirituel</h2>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
