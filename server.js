@@ -76,3 +76,26 @@ io.on('connection', socket => {
 // Demare sèvè a
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`🚀 Sèvè a ap kouri sou pò ${PORT}`));
+
+
+
+
+
+
+// enskri yon nouvo itilizatè
+app.post('/api/auth/register', ...);
+
+// konekte yon itilizatè
+app.post('/api/auth/login', ...);
+
+// dekonekte
+app.post('/api/auth/logout', ...);
+
+// voye demand zanmi
+app.post('/api/friends/request', requireAuth, ...);
+
+// aksepte ou refize demand zanmi
+app.post('/api/friends/respond', requireAuth, ...);
+
+// jwenn tout zanmi aksepte ou
+app.get('/api/friends/list', requireAuth, ...);
