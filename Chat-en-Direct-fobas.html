@@ -25,9 +25,9 @@
       border-radius: 20px;
       padding: 30px;
       display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: space-between;
+      flex-direction: column; /* Chanje sa pou mode portrait */
+      justify-content: flex-start;
+      align-items: stretch;
       width: 100%;
       max-width: 900px;
       margin: auto;
@@ -35,8 +35,7 @@
     }
 
     .left, .right {
-      flex: 1;
-      min-width: 280px;
+      width: 100%;
       padding: 15px;
     }
 
@@ -146,8 +145,6 @@
 
     @media (max-width: 768px) {
       .container {
-        flex-direction: column;
-        align-items: center;
         padding: 25px 15px;
       }
 
