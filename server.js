@@ -117,3 +117,26 @@ app.post('/api/friends/respond', requireAuth, ...);
 
 // jwenn tout zanmi aksepte ou
 app.get('/api/friends/list', requireAuth, ...);
+
+
+
+
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server); // Socket.io konekte ak serve a
+
+const onlineUsers = {}; // pou swiv moun ki konekte
+
+// koneksyon chak itilizatè
+io.on('connection', socket => {
+  // ... mete tout kòd koneksyon la a
+});
+
+// Lanse serve a
+server.listen(3000, () => {
+  console.log("Serve ap koute sou port 3000");
+});
