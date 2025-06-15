@@ -32,7 +32,7 @@
       flex-wrap: wrap;
       justify-content: space-between;
       width: 100%;
-      max-width: 900px; /* pi piti pase avan */
+      max-width: 900px;
       box-shadow: 0 0 40px rgba(0,0,0,0.5);
     }
 
@@ -172,6 +172,11 @@
         margin: 0 auto 10px;
       }
     }
+
+    /* Additional hidden form logic */
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -179,8 +184,8 @@
     <div class="left">
       <h1>Sign in to<br>your account</h1>
       <div class="buttons">
-        <button>Sign In</button>
-        <button style="background: rgba(255,255,255,0.1);">Sign Up</button>
+        <button onclick="showForm('signin')">Sign In</button>
+        <button onclick="showForm('signup')" style="background: rgba(255,255,255,0.1);">Sign Up</button>
       </div>
       <div class="chat-box">
         <h3>Public Chat</h3>
@@ -199,15 +204,26 @@
       </div>
     </div>
     <div class="right">
-      <form>
+      <!-- Sign In Form -->
+      <form id="signin-form">
         <input type="email" placeholder="Email address" required>
         <input type="password" placeholder="Password" required>
         <div class="checkbox">
           <input type="checkbox" checked>
           <label>Forgot password?</label>
         </div>
-        <button class="seminar-btn">Séminaire Cyber-sécurité et Piratage</button>
+        <button class="seminar-btn">Se connecter</button>
       </form>
+
+      <!-- Sign Up Form -->
+      <form id="signup-form" class="hidden">
+        <input type="text" placeholder="Nom complet" required>
+        <input type="email" placeholder="Email" required>
+        <input type="password" placeholder="Créer un mot de passe" required>
+        <input type="password" placeholder="Confirmer mot de passe" required>
+        <button class="seminar-btn">Créer un compte</button>
+      </form>
+
       <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" alt="lock" class="lock">
       <div class="footer-logo">
         <img src="https://cdn-icons-png.flaticon.com/512/869/869869.png" alt="logo soleil">
@@ -215,5 +231,20 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function showForm(formType) {
+      const signInForm = document.getElementById('signin-form');
+      const signUpForm = document.getElementById('signup-form');
+
+      if (formType === 'signin') {
+        signInForm.classList.remove('hidden');
+        signUpForm.classList.add('hidden');
+      } else {
+        signInForm.classList.add('hidden');
+        signUpForm.classList.remove('hidden');
+      }
+    }
+  </script>
 </body>
 </html>
