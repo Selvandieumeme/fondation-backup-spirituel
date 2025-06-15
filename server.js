@@ -20,6 +20,24 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
+
+io.on('connection', socket => {
+  const userId = socket.userId; // ID moun ki konekte a (ou dwe mete li via sesyon)
+  onlineUsers[userId] = socket.id;
+
+  socket.on('private message', ({ to, message }) => {
+    if (!onlineUsers[to]) return;
+    io.to(onlineUsers[to]).emit('private message', { from: userId, message });
+  });
+
+  socket.on('disconnect', () => {
+    delete onlineUsers[userId]; // Retire moun lan si li dekonekte
+  });
+});
+
+
+
+
 // Middleware pou JSON
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
