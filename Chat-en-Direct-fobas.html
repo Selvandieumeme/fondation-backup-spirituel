@@ -25,11 +25,11 @@
       border-radius: 20px;
       padding: 30px;
       display: flex;
-      flex-direction: column; /* Chanje sa pou mode portrait */
+      flex-direction: column;
       justify-content: flex-start;
       align-items: stretch;
       width: 100%;
-      max-width: 720px; /* Pi piti pou rann li pi bèl vizyèlman */
+      max-width: 720px;
       margin: auto;
       box-shadow: 0 0 40px rgba(0,0,0,0.5);
     }
@@ -227,7 +227,6 @@
 </head>
 <body>
 
-  <!-- Paj dakey chat prensipal ou -->
   <div class="container">
     <div class="left">
       <h1>Sign in to<br>your account</h1>
@@ -249,8 +248,14 @@
           <span><strong>User3</strong>: Hello!</span>
           <span>14:00</span>
         </div>
+
+        <!-- Bouton pou louvri Chat-public.html -->
+        <div style="margin-top: 15px;">
+          <a href="Chat-public.html" class="seminar-btn" style="display: inline-block; text-align: center; text-decoration: none;">Accéder au Chat Public</a>
+        </div>
       </div>
     </div>
+
     <div class="right">
       <form>
         <input type="email" placeholder="Email address" required>
