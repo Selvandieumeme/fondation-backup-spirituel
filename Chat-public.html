@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ht">
 <head>
   <meta charset="UTF-8">
@@ -54,6 +54,8 @@
       margin-bottom: 20px;
       background: #f2f2f2;
       border-radius: 5px;
+      font-size: 14px;
+      line-height: 1.4;
     }
     #messageList div {
       margin-bottom: 12px;
@@ -61,8 +63,6 @@
       background: #e8f0fe;
       border-left: 4px solid #3498db;
       border-radius: 5px;
-      font-size: 14px;
-      line-height: 1.4;
     }
     .form-group {
       margin-bottom: 15px;
@@ -148,32 +148,53 @@
   <!-- SCRIPT PUSHER + CHAT -->
   <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
   <script>
+    // Pwoteksyon kont HTML Injection
     function netwaye(mesaj) {
       return mesaj.replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
+    // Chaje non itilizatè ki te sove deja
     window.onload = () => {
       const savedName = localStorage.getItem("fobas_username");
       if (savedName) document.getElementById("username").value = savedName;
     };
 
+    // Ajoute nouvo mesaj nan lis la epi scroll anba otomatikman
+    function ajouteMesajTekst(texte) {
+      const list = document.getElementById("messageList");
+      const isAtBottom = list.scrollHeight - list.scrollTop <= list.clientHeight + 50;
+
+      const newMessage = document.createElement("div");
+      newMessage.innerHTML = texte; // Sa vin sekirize paske nou itilize netwaye()
+      list.appendChild(newMessage);
+
+      if (isAtBottom) {
+        list.scrollTop = list.scrollHeight;
+      }
+
+      // Jwe son notifikasyon
+      document.getElementById("messageSound").play().catch(() => {});
+    }
+
+    // Voye mesaj bay backend la, epi reset input si voye mache
     function voye() {
       const non = document.getElementById("username").value.trim();
       const mesaj = document.getElementById("mesaj").value.trim();
+
       if (non === "" || mesaj === "") {
         alert("Tanpri mete non ou epi ekri yon mesaj.");
         return;
       }
 
       document.getElementById("btnVoye").disabled = true;
-
       localStorage.setItem("fobas_username", non);
+
       const now = new Date();
       const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
       const safeMesaj = netwaye(mesaj);
-      const konbine = [${timestamp}] ${non}: ${safeMesaj};
+      const konbine = `[${timestamp}] ${netwaye(non)}: ${safeMesaj}`;
 
+      // POST sou backend ou sou Render
       fetch("https://chat-en-direct-fobas.onrender.com/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -181,8 +202,13 @@
       })
       .then(res => res.json())
       .then(data => {
-        if (data.sent) document.getElementById("mesaj").value = "";
-        else alert("Mesaj la pa rive.");
+        if (data.sent) {
+          document.getElementById("mesaj").value = "";
+          // Ajoute mesaj dirèk nan chat (evite ret tann pusher)
+          ajouteMesajTekst(konbine);
+        } else {
+          alert("Mesaj la pa rive.");
+        }
         document.getElementById("btnVoye").disabled = false;
       })
       .catch(error => {
@@ -194,28 +220,27 @@
       reponnBot(mesaj);
     }
 
+    // Efase tout mesaj sou ekran an
     function efaseTout() {
       document.getElementById("messageList").innerHTML = "";
     }
 
-    const pusher = new Pusher("5c6d93290538e3d2fbda", { cluster: "us2" });
+    // Koneksyon ak Pusher pou resevwa nouvo mesaj real-time
+    const pusher = new Pusher("5c6d93290538e3d2fbda", {
+      cluster: "us2",
+      encrypted: true
+    });
+
     const channel = pusher.subscribe("my-channel");
 
     channel.bind("my-event", function(data) {
-      const list = document.getElementById("messageList");
-      const isAtBottom = list.scrollHeight - list.scrollTop <= list.clientHeight + 50;
+      if (!data.message) return;
 
-      const newMessage = document.createElement("div");
-      newMessage.textContent = data.message;
-      list.appendChild(newMessage);
-
-      if (isAtBottom) {
-        list.scrollTop = list.scrollHeight;
-      }
-
-      document.getElementById("messageSound").play().catch(() => {});
+      // Ajoute mesaj ki sòti nan Pusher
+      ajouteMesajTekst(netwaye(data.message));
     });
 
+    // Fonksyon chatbot pou reponn ak kèk fraz senp
     function reponnBot(mesajUser) {
       const reponsSenp = {
         "bonjou": "Bonjou! Kijan ou ye jodi a?",
@@ -231,7 +256,7 @@
       if (repons) {
         const now = new Date();
         const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const botMessage = [${timestamp}] BOT Fobas: ${reponsSenp[repons]};
+        const botMessage = `[${timestamp}] BOT Fobas: ${reponsSenp[repons]}`;
 
         fetch("https://chat-en-direct-fobas.onrender.com/send", {
           method: "POST",
@@ -244,4 +269,3 @@
 
 </body>
 </html>
-
