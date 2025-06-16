@@ -54,6 +54,11 @@ const pusher = new Pusher({
   useTLS: true
 });
 
+// --- Ajout route GET '/' pou evite 'Cannot GET /' ---
+app.get('/', (req, res) => {
+  res.send("✅ Sèvè a ap mache kòrèkteman sou Render!");
+});
+
 // ✅ ✅ ✅ AJOUT FINAL KI TRES ENPÒTAN POU RENDER
 const PORT = process.env.PORT || 3000;
 
