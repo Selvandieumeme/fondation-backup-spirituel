@@ -63,3 +63,13 @@ async function loadMessages() {
 }
 
 loadMessages();
+
+
+
+
+
+#chat p {
+  margin: 4px 0;
+  padding: 4px;
+  border-bottom: 1px dashed #ccc;
+}
