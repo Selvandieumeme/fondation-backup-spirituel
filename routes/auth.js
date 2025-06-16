@@ -5,8 +5,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user'); // <- enpòte modèl User la kòrèkteman
 
-
-
 // 🔐 Sekrè pou JWT
 const JWT_SECRET = process.env.JWT_SECRET || "backupsecret"; // mete sa nan .env ou
 
