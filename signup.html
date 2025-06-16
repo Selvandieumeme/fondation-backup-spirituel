@@ -8,6 +8,7 @@
     form { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px #ccc; }
     input { width: 100%; padding: 10px; margin: 10px 0; }
     button { padding: 10px 20px; background: green; color: white; border: none; cursor: pointer; }
+    button:disabled { background: gray; cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -22,21 +23,40 @@
   <script>
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      const button = e.target.querySelector('button');
+      button.disabled = true;
+      button.textContent = "Création...";
+
       const data = {
         username: document.getElementById('username').value,
         email: document.getElementById('email').value,
         password: document.getElementById('password').value
       };
 
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+      try {
+        const res = await fetch('https://fondation-backup-spirituel.onrender.com/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
 
-      const result = await res.json();
-      alert(result.message || result.error);
-      if (res.ok) window.location.href = "login.html";
+        const result = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+          alert(result.message || "Compte créé avec succès !");
+          window.location.href = "login.html";
+        } else {
+          alert(result.error || "Une erreur est survenue !");
+        }
+
+      } catch (error) {
+        console.error("Erreur réseau :", error);
+        alert("Impossible de contacter le serveur.");
+      } finally {
+        button.disabled = false;
+        button.textContent = "S'inscrire";
+      }
     });
   </script>
 </body>
