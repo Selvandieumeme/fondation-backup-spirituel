@@ -140,3 +140,65 @@ io.on('connection', socket => {
 server.listen(3000, () => {
   console.log("Serve ap koute sou port 3000");
 });
+
+
+
+
+
+// server.js
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const dotenv = require('dotenv');
+const path = require('path');
+
+const connectDB = require('./db');
+const Message = require('./models/Message');
+
+dotenv.config();
+connectDB();
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+const sessionMiddleware = session({
+  secret: 'backup-fobas-sekre',
+  resave: false,
+  saveUninitialized: true,
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+});
+
+app.use(sessionMiddleware);
+io.engine.use(sessionMiddleware);
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+
+// Sove id itilizatè ki konekte yo
+const onlineUsers = {};
+
+io.on('connection', (socket) => {
+  const session = socket.request.session;
+  const userId = session?.userId || 'anonim';
+
+  onlineUsers[userId] = socket.id;
+
+  socket.on('private message', async ({ to, message }) => {
+    await Message.create({ from: userId, to, message });
+
+    if (onlineUsers[to]) {
+      io.to(onlineUsers[to]).emit('private message', { from: userId, message });
+    }
+  });
+
+  socket.on('disconnect', () => {
+    delete onlineUsers[userId];
+  });
+});
+
+server.listen(process.env.PORT, () => {
+  console.log(`✅ Serveur ap koute sou http://localhost:${process.env.PORT}`);
+});
