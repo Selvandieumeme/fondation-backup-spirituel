@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user'); // <- enpòte modèl User la kòrèkteman
 
 // 🧠 Nou swete ou te deja mete model User nan index.js ou a
 const User = mongoose.model('User');
