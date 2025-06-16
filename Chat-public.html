@@ -245,38 +245,3 @@
 </body>
 </html>
 
-
-
-
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fobas Chat Prive</title>
-  <style>
-    body { font-family: Arial; margin: 30px; }
-    #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; margin-top: 10px; }
-  </style>
-</head>
-<body>
-  <h2>🗣️ Fobas Chat Prive</h2>
-
-  <label for="toUser">ID Moun ou vle voye mesaj bay:</label><br />
-  <input type="text" id="toUser" placeholder="egzanp: Eva" /><br /><br />
-
-  <label for="message">Mesaj ou:</label><br />
-  <input type="text" id="message" placeholder="Ekri mesaj la..." />
-  <button onclick="sendPrivateMessage()">Voye</button>
-
-  <div id="chat"></div>
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="chat.js"></script>
-</body>
-</html>
