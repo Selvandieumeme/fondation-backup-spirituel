@@ -42,6 +42,27 @@ io.on('connection', socket => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+
+// API pou rekipere tout mesaj prive pou itilizatè a
+app.get('/messages/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const messages = await Message.find({
+      $or: [{ from: userId }, { to: userId }]
+    }).sort({ timestamp: 1 });
+
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: 'Erè pandan chajman mesaj yo.' });
+  }
+});
+
+
+
+
+
 // Sesyon Express
 app.use(session({
   secret: process.env.SESSION_SECRET,
