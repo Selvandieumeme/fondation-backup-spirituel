@@ -53,3 +53,10 @@ const pusher = new Pusher({
   cluster: process.env.PUSHER_CLUSTER,
   useTLS: true
 });
+
+// ✅ ✅ ✅ AJOUT FINAL KI TRES ENPÒTAN POU RENDER
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`✅ Serveur ap koute sou le port ${PORT}`);
+});
