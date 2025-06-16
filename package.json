@@ -16,11 +16,15 @@
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.1",
     "pusher": "^5.0.0",
     "bcrypt": "^6.0.0"
 =======
+=======
+    "jsonwebtoken": "^9.0.2",
+>>>>>>> a2d0225 (Ajoute jsonwebtoken pou JWT)
     "mongoose": "^8.15.2",
     "pusher": "^5.0.0",
     "socket.io": "^4.8.1"

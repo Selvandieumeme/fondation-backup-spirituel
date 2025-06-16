@@ -1,3 +1,4 @@
+﻿<<<<<<< HEAD
 // server.js
 require('dotenv').config();
 const express = require('express');
@@ -181,10 +182,24 @@ const Message = require('./models/Message');
 dotenv.config();
 connectDB();
 
+=======
+const express = require('express');
+const session = require('express-session');
+const http = require('http');
+const { Server } = require('socket.io');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const MongoStore = require('connect-mongo');
+const dotenv = require('dotenv');
+const User = require('./models/User');
+
+dotenv.config();
+>>>>>>> a2d0225 (Ajoute jsonwebtoken pou JWT)
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+<<<<<<< HEAD
 const sessionMiddleware = session({
   secret: 'backup-fobas-sekre',
   resave: false,
@@ -212,10 +227,59 @@ io.on('connection', (socket) => {
 
     if (onlineUsers[to]) {
       io.to(onlineUsers[to]).emit('private message', { from: userId, message });
+=======
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const sessionMiddleware = session({
+  secret: process.env.SESSION_SECRET || 'backupsecret',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI })
+});
+
+app.use(express.static('public'));
+app.use(express.json());
+app.use(sessionMiddleware);
+io.engine.use(sessionMiddleware);
+
+const onlineUsers = {};
+
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  let user = await User.findOne({ username });
+  if (!user) {
+    const hash = await bcrypt.hash(password, 10);
+    user = await User.create({ username, password: hash });
+  }
+
+  const valid = await bcrypt.compare(password, user.password);
+  if (valid) {
+    req.session.username = username;
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(401);
+  }
+});
+
+io.on('connection', socket => {
+  const session = socket.request.session;
+  if (!session || !session.username) return;
+
+  const username = session.username;
+  socket.username = username;
+  onlineUsers[username] = socket.id;
+
+  io.emit('users', Object.keys(onlineUsers));
+
+  socket.on('private message', ({ to, message }) => {
+    if (onlineUsers[to]) {
+      io.to(onlineUsers[to]).emit('private message', { from: username, message });
+>>>>>>> a2d0225 (Ajoute jsonwebtoken pou JWT)
     }
   });
 
   socket.on('disconnect', () => {
+<<<<<<< HEAD
     delete onlineUsers[userId];
   });
 });
@@ -223,3 +287,15 @@ io.on('connection', (socket) => {
 server.listen(process.env.PORT, () => {
   console.log(`✅ Serveur ap koute sou http://localhost:${process.env.PORT}`);
 });
+=======
+    delete onlineUsers[username];
+    io.emit('users', Object.keys(onlineUsers));
+  });
+
+  socket.on('new user', () => {
+    io.emit('users', Object.keys(onlineUsers));
+  });
+});
+
+server.listen(3000, () => console.log('Serveur ap koute sou http://localhost:3000'));
+>>>>>>> a2d0225 (Ajoute jsonwebtoken pou JWT)
