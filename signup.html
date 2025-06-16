@@ -9,6 +9,7 @@
     input { width: 100%; padding: 10px; margin: 10px 0; }
     button { padding: 10px 20px; background: green; color: white; border: none; cursor: pointer; }
     button:disabled { background: gray; cursor: not-allowed; }
+    #verifyForm { display: none; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -20,12 +21,22 @@
     <button type="submit">S'inscrire</button>
   </form>
 
-  <script>
-    document.getElementById('signupForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      console.log("Bouton 'S'inscrire' cliqué");
+  <form id="verifyForm">
+    <input type="text" id="code" placeholder="Entrez le code reçu par e-mail" required>
+    <button type="button" id="verifyButton">Valider le code</button>
+  </form>
 
-      const button = e.target.querySelector('button');
+  <script>
+    const signupForm = document.getElementById('signupForm');
+    const verifyForm = document.getElementById('verifyForm');
+    const verifyButton = document.getElementById('verifyButton');
+
+    let savedEmail = "";
+
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const button = signupForm.querySelector('button');
       button.disabled = true;
       button.textContent = "Création...";
 
@@ -34,6 +45,8 @@
         email: document.getElementById('email').value.trim(),
         password: document.getElementById('password').value
       };
+
+      savedEmail = data.email;
 
       try {
         const res = await fetch('https://fondation-backup-spirituel.onrender.com/api/auth/signup', {
@@ -46,8 +59,8 @@
         console.log("Réponse du serveur:", result);
 
         if (res.ok) {
-          alert(result.message || "Compte créé avec succès !");
-          window.location.href = "login.html";
+          alert(result.message || "Compte créé. Vérifiez votre e-mail.");
+          verifyForm.style.display = 'block';
         } else {
           alert(result.error || "Une erreur est survenue !");
         }
@@ -58,6 +71,29 @@
       } finally {
         button.disabled = false;
         button.textContent = "S'inscrire";
+      }
+    });
+
+    verifyButton.addEventListener('click', async () => {
+      const code = document.getElementById('code').value.trim();
+
+      try {
+        const res = await fetch('https://fondation-backup-spirituel.onrender.com/api/auth/verify-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: savedEmail, code })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          alert("E-mail validé avec succès.");
+          window.location.href = "login.html";
+        } else {
+          alert(result.error || "Code incorrect.");
+        }
+      } catch (err) {
+        alert("Erreur lors de la vérification : " + err.message);
       }
     });
   </script>
