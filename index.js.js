@@ -1,5 +1,7 @@
 require('dotenv').config(); // Fè sa yon sèl fwa an tèt
 
+app.use(express.static(path.join(__dirname, "public")));
+
 // 👇 Test si .env byen chaje
 console.log("MONGODB_URI =>", process.env.MONGODB_URI);
 
@@ -8,6 +10,8 @@ const Pusher = require("pusher");
 const cors = require("cors");
 const fs = require("fs");
 const mongoose = require("mongoose");
+
+
 
 // 🟢 AJOUT ROUTE AUTH
 const authRoutes = require('./routes/auth'); // 🟢 Route login/signup
