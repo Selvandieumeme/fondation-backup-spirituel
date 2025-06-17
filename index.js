@@ -7,20 +7,18 @@ const cors = require("cors");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const { Parser } = require("json2csv"); // ✅ Pou ekspòte CSV
 
-// Kreye app la
 const app = express();
 
 // Test si .env byen chaje
 console.log("MONGODB_URI =>", process.env.MONGODB_URI);
 
-// Middleware JSON & CORS
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public"))); // Pou l ka sèvi admin si bezwen
+app.use(express.static(path.join(__dirname, "public")));
 
-// 🟢 ROUTES API: Auth routes yo vini ANVAN static
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
@@ -46,19 +44,29 @@ app.get("/admin", (req, res) => {
 app.post("/admin", async (req, res) => {
   const { username, password } = req.body;
   if (username === ADMIN_USER && password === ADMIN_PASS) {
-    // Chaje done yo
-    const messages = await Message.find().sort({ createdAt: -1 }).limit(10);
+    const messages = await Message.find().sort({ createdAt: -1 });
     const users = await User.find().sort({ username: 1 });
 
-    // Fòme paj dashboard la
     const dashboardHtml = `
       <div style="padding: 30px; font-family: sans-serif;">
         <h1>✅ Bienvenue administrateur Fobas!</h1>
         <p><strong>Koneksyon fèt:</strong> ${new Date().toLocaleString()}</p>
 
+        <form action="/export" method="GET" style="margin-bottom: 20px;">
+          <button type="submit" style="padding: 10px 20px; background: green; color: white; border: none;">📁 Telechaje CSV</button>
+        </form>
+
         <h2>🗣️ Dènye Mesaj yo</h2>
         <ul>
-          ${messages.map(msg => `<li><strong>${msg.sender}:</strong> ${msg.content} (${new Date(msg.createdAt).toLocaleString()})</li>`).join('')}
+          ${messages.map(msg => `
+            <li>
+              <strong>${msg.sender}:</strong> ${msg.content} (${new Date(msg.createdAt).toLocaleString()})
+              <form method="POST" action="/delete-message" style="display:inline;">
+                <input type="hidden" name="id" value="${msg._id}" />
+                <button type="submit" style="color:red; margin-left:10px;">🗑️ Efase</button>
+              </form>
+            </li>
+          `).join('')}
         </ul>
 
         <h2>👥 Lis Itilizatè yo</h2>
@@ -71,6 +79,35 @@ app.post("/admin", async (req, res) => {
     res.send(dashboardHtml);
   } else {
     res.status(401).send("❌ Erè: Enfòmasyon ou mete yo pa valab!");
+  }
+});
+
+// ✅ Export messages in CSV
+app.get("/export", async (req, res) => {
+  try {
+    const messages = await Message.find();
+    const fields = ["_id", "sender", "content", "createdAt"];
+    const json2csv = new Parser({ fields });
+    const csv = json2csv.parse(messages);
+
+    res.header("Content-Type", "text/csv");
+    res.attachment("messages.csv");
+    return res.send(csv);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("❌ Erè ekspòtasyon CSV!");
+  }
+});
+
+// ✅ Efase yon mesaj
+app.post("/delete-message", async (req, res) => {
+  const id = req.body.id;
+  try {
+    await Message.findByIdAndDelete(id);
+    res.redirect("/admin");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("❌ Erè pandan efasman mesaj la.");
   }
 });
 
