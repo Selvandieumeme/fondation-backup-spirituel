@@ -43,10 +43,32 @@ app.get("/admin", (req, res) => {
   `);
 });
 
-app.post("/admin", (req, res) => {
+app.post("/admin", async (req, res) => {
   const { username, password } = req.body;
   if (username === ADMIN_USER && password === ADMIN_PASS) {
-    res.send("✅ Bienvenue administrateur Fobas!");
+    // Chaje done yo
+    const messages = await Message.find().sort({ createdAt: -1 }).limit(10);
+    const users = await User.find().sort({ username: 1 });
+
+    // Fòme paj dashboard la
+    const dashboardHtml = `
+      <div style="padding: 30px; font-family: sans-serif;">
+        <h1>✅ Bienvenue administrateur Fobas!</h1>
+        <p><strong>Koneksyon fèt:</strong> ${new Date().toLocaleString()}</p>
+
+        <h2>🗣️ Dènye Mesaj yo</h2>
+        <ul>
+          ${messages.map(msg => `<li><strong>${msg.sender}:</strong> ${msg.content} (${new Date(msg.createdAt).toLocaleString()})</li>`).join('')}
+        </ul>
+
+        <h2>👥 Lis Itilizatè yo</h2>
+        <ul>
+          ${users.map(user => `<li>${user.username} - ${user.email}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+
+    res.send(dashboardHtml);
   } else {
     res.status(401).send("❌ Erè: Enfòmasyon ou mete yo pa valab!");
   }
@@ -84,11 +106,6 @@ const pusher = new Pusher({
   cluster: process.env.PUSHER_CLUSTER,
   useTLS: true
 });
-
-// 🔵 Si ou vle, ou ka mete route debaz sa si w ap teste API sèlman
-// app.get('/', (req, res) => {
-//   res.send("✅ Sèvè a ap mache kòrèkteman sou Render!");
-// });
 
 // Koute sou PORT
 const PORT = process.env.PORT || 3000;
