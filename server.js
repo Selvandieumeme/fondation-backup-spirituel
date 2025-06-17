@@ -7,7 +7,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const socketio = require('socket.io');
 const path = require('path');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 const User = require('./models/User');
 const Message = require('./models/Message');
