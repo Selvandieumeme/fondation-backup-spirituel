@@ -1,9 +1,9 @@
-﻿const express = require('express');
+const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const user = require('../models/user'); // <- enpòte modèl User la kòrèkteman
+const User = require('../models/user'); // ✅ Ranje non model la (User ak U majiskil)
 
 // 🔐 Sekrè pou JWT
 const JWT_SECRET = process.env.JWT_SECRET || "backupsecret"; // mete sa nan .env ou
@@ -21,8 +21,8 @@ router.post('/signup', async (req, res) => {
       return res.status(409).json({ error: "Itilizatè oswa imel deja egziste." });
     }
 
-    const user = new User({ username, email, password });
-    await user.save();
+    const newUser = new User({ username, email, password });
+    await newUser.save();
 
     res.status(201).json({ message: "✅ Kont kreye avèk siksè!" });
   } catch (e) {
