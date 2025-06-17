@@ -16,8 +16,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the "public" directory
-app.use(express.static('public'));
 
 
 // 🟢 AKTIVE ROUTE AUTH
