@@ -8,29 +8,29 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-// Kreye app la AVAN ou itilize li
+// Kreye app la
 const app = express();
 
 // Test si .env byen chaje
 console.log("MONGODB_URI =>", process.env.MONGODB_URI);
 
-// MIddleware
+// Middleware JSON & CORS
 app.use(cors());
 app.use(express.json());
 
-// Servi fichye static nan folder "public"
-app.use(express.static(path.join(__dirname, "public")));
-
-// 🟢 AJOUT ROUTE AUTH
+// 🟢 ROUTES API: Auth routes yo vini ANVAN static
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
-// Konekte ak MongoDB
+// Servi fichye static (HTML, CSS, JS) nan folder "public"
+app.use(express.static(path.join(__dirname, "public")));
+
+// Koneksyon ak MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB konekte avèk siksè !"))
   .catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
 
-// Schemas & Models
+// Mongoose schemas
 const messageSchema = new mongoose.Schema({
   sender: { type: String, required: true },
   content: { type: String, required: true }
@@ -58,10 +58,10 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-// Route debaz
-app.get('/', (req, res) => {
-  res.send("✅ Sèvè a ap mache kòrèkteman sou Render!");
-});
+// 🔵 Si ou vle, ou ka mete route debaz sa si w ap teste API sèlman
+// app.get('/', (req, res) => {
+//   res.send("✅ Sèvè a ap mache kòrèkteman sou Render!");
+// });
 
 // Koute sou PORT
 const PORT = process.env.PORT || 3000;
