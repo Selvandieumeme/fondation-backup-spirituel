@@ -23,6 +23,10 @@ const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
 
+app.get('/', (req, res) => {
+  res.send("✅ API Chat Fobas ap mache kòrèkteman sou Render!");
+});
+
 
 // Koneksyon ak MongoDB
 mongoose.connect(process.env.MONGODB_URI)
