@@ -7,7 +7,6 @@ const cors = require("cors");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const { Parser } = require("json2csv"); // CSV Export
 
 // Kreye app la
 const app = express();
@@ -44,46 +43,34 @@ app.get("/admin", (req, res) => {
   `);
 });
 
-app.post("/admin", (req, res) => {
+app.post("/admin", async (req, res) => {
   const { username, password } = req.body;
   if (username === ADMIN_USER && password === ADMIN_PASS) {
-    res.send(`
-      <h2>✅ Bienvenue administrateur Fobas!</h2>
-      <p><a href="/admin/export-messages" target="_blank" style="padding: 10px; background: green; color: white; text-decoration: none;">📥 Telechaje CSV Mesaj</a></p>
-      <form method="POST" action="/admin/delete-message" style="margin-top: 20px;">
-        <input type="text" name="messageId" placeholder="Antre ID mesaj la pou efase" required style="padding: 8px; width: 300px;">
-        <button type="submit" style="padding: 8px 15px; background: red; color: white;">🗑️ Efase Mesaj</button>
-      </form>
-    `);
+    // Chaje done yo
+    const messages = await Message.find().sort({ createdAt: -1 }).limit(10);
+    const users = await User.find().sort({ username: 1 });
+
+    // Fòme paj dashboard la
+    const dashboardHtml = `
+      <div style="padding: 30px; font-family: sans-serif;">
+        <h1>✅ Bienvenue administrateur Fobas!</h1>
+        <p><strong>Koneksyon fèt:</strong> ${new Date().toLocaleString()}</p>
+
+        <h2>🗣️ Dènye Mesaj yo</h2>
+        <ul>
+          ${messages.map(msg => `<li><strong>${msg.sender}:</strong> ${msg.content} (${new Date(msg.createdAt).toLocaleString()})</li>`).join('')}
+        </ul>
+
+        <h2>👥 Lis Itilizatè yo</h2>
+        <ul>
+          ${users.map(user => `<li>${user.username} - ${user.email}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+
+    res.send(dashboardHtml);
   } else {
     res.status(401).send("❌ Erè: Enfòmasyon ou mete yo pa valab!");
-  }
-});
-
-app.post("/admin/delete-message", async (req, res) => {
-  const { messageId } = req.body;
-  try {
-    await Message.findByIdAndDelete(messageId);
-    res.send(`<p>✅ Mesaj efase avèk siksè!</p><a href="/admin">Retounen</a>`);
-  } catch (error) {
-    res.status(500).send("❌ Erè pandan efasman mesaj la.");
-  }
-});
-
-app.get("/admin/export-messages", async (req, res) => {
-  try {
-    const messages = await Message.find().lean();
-    const fields = ["_id", "sender", "content", "createdAt"];
-    const opts = { fields };
-    const parser = new Parser(opts);
-    const csv = parser.parse(messages);
-    
-    res.header("Content-Type", "text/csv");
-    res.attachment("messages.csv");
-    return res.send(csv);
-  } catch (error) {
-    console.error("❌ Erè ekspòtasyon:", error);
-    res.status(500).send("Erè pandan ekspòtasyon CSV la.");
   }
 });
 
