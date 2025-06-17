@@ -7,11 +7,9 @@ const cors = require("cors");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const { Parser } = require("json2csv"); // ✅ Pou ekspòte CSV
 
 const app = express();
 
-// Test si .env byen chaje
 console.log("MONGODB_URI =>", process.env.MONGODB_URI);
 
 app.use(cors());
@@ -26,7 +24,6 @@ app.get('/', (req, res) => {
   res.send("✅ API Chat Fobas ap mache kòrèkteman sou Render!");
 });
 
-// ✅ ROUTE ADMIN LOGIN - AJOUT SÉCURISÉ
 const ADMIN_USER = process.env.ADMIN_USER;
 const ADMIN_PASS = process.env.ADMIN_PASS;
 
@@ -75,33 +72,34 @@ app.post("/admin", async (req, res) => {
         </ul>
       </div>
     `;
-
     res.send(dashboardHtml);
   } else {
     res.status(401).send("❌ Erè: Enfòmasyon ou mete yo pa valab!");
   }
 });
 
-// ✅ Export messages in CSV
+// ✅ Route pou ekspòte CSV — trè senp, san json2csv
 app.get("/export", async (req, res) => {
   try {
-    const messages = await Message.find();
-    const fields = ["_id", "sender", "content", "createdAt"];
-    const json2csv = new Parser({ fields });
-    const csv = json2csv.parse(messages);
+    const messages = await Message.find().sort({ createdAt: -1 });
+    const header = "ID,SENDER,CONTENT,DATE\n";
+    const rows = messages.map(m => {
+      return `"${m._id}","${m.sender}","${m.content.replace(/"/g, '""')}","${m.createdAt.toISOString()}"`;
+    }).join("\n");
+    const csv = header + rows;
 
     res.header("Content-Type", "text/csv");
     res.attachment("messages.csv");
     return res.send(csv);
   } catch (err) {
     console.error(err);
-    res.status(500).send("❌ Erè ekspòtasyon CSV!");
+    res.status(500).send("❌ Erè pandan ekspòtasyon CSV.");
   }
 });
 
-// ✅ Efase yon mesaj
+// ✅ Route pou efase mesaj
 app.post("/delete-message", async (req, res) => {
-  const id = req.body.id;
+  const { id } = req.body;
   try {
     await Message.findByIdAndDelete(id);
     res.redirect("/admin");
@@ -111,12 +109,12 @@ app.post("/delete-message", async (req, res) => {
   }
 });
 
-// Koneksyon ak MongoDB
+// 🔗 MongoDB koneksyon
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB konekte avèk siksè !"))
   .catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
 
-// Mongoose schemas
+// 🔐 Schémas MongoDB
 const messageSchema = new mongoose.Schema({
   sender: { type: String, required: true },
   content: { type: String, required: true }
@@ -135,7 +133,7 @@ userSchema.pre('save', async function (next) {
 });
 const User = mongoose.model('User', userSchema);
 
-// Pusher config
+// Pusher setup
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_KEY,
@@ -144,7 +142,7 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-// Koute sou PORT
+// 📡 Koute sou port
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Serveur ap koute sou le port ${PORT}`);
