@@ -30,14 +30,10 @@ const ADMIN_PASS = process.env.ADMIN_PASS;
 const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
 const ALLOWED_IP = process.env.ALLOWED_ADMIN_IP;
 
-// ✅ Filtraj IP
-app.use(SECURE_ADMIN_PATH, (req, res, next) => {
-  const clientIp = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-  if (ALLOWED_IP && clientIp !== ALLOWED_IP) {
-    return res.status(403).send("❌ Ou pa gen dwa antre isit la.");
-  }
-  next();
-});
+// Konsa li aksepte swa IPv4, swa IPv6, swa fòm ::ffff:
+if (allowedIP !== "*" && !realIP.includes(allowedIP)) {
+  return res.status(403).send("❌ Ou pa gen dwa antre isit la");
+}
 
 // ✅ Dashboard admin lan
 app.get(SECURE_ADMIN_PATH, async (req, res) => {
