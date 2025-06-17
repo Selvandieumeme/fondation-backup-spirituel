@@ -22,8 +22,7 @@ app.use(express.json());
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
-// Servi fichye static (HTML, CSS, JS) nan folder "public"
-app.use(express.static(path.join(__dirname, "public")));
+
 
 // Koneksyon ak MongoDB
 mongoose.connect(process.env.MONGODB_URI)
