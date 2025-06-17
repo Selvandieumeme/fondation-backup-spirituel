@@ -8,6 +8,8 @@ const cors = require("cors");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const session = require("express-session");
+const crypto = require("crypto");
 
 const app = express();
 
@@ -17,6 +19,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+
+// ✅ Session setup pou admin otantifikasyon
+app.use(session({
+  secret: crypto.randomBytes(64).toString("hex"),
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 3600000 } // 1h
+}));
 
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
@@ -28,84 +38,62 @@ app.get('/', (req, res) => {
 const ADMIN_USER = process.env.ADMIN_USER;
 const ADMIN_PASS = process.env.ADMIN_PASS;
 
-app.get("/admin", async (req, res) => {
+// ✅ Middleware pou verifye si admin konekte
+function verifyAdmin(req, res, next) {
+  if (req.session && req.session.isAdmin) {
+    next();
+  } else {
+    res.redirect("/admin/login");
+  }
+}
+
+app.get("/admin/login", (req, res) => {
+  res.send(`
+    <form method="POST" action="/admin/login" style="padding: 50px; font-family: sans-serif;">
+      <h2>Connexion Admin</h2>
+      <input type="text" name="username" placeholder="Nom d'utilisateur" required style="padding: 10px; margin: 10px 0; width: 100%;"><br>
+      <input type="password" name="password" placeholder="Mot de passe" required style="padding: 10px; margin: 10px 0; width: 100%;"><br>
+      <button type="submit" style="padding: 10px 20px;">Se connecter</button>
+    </form>
+  `);
+});
+
+app.post("/admin/login", async (req, res) => {
+  const { username, password } = req.body;
+  if (username === ADMIN_USER && password === ADMIN_PASS) {
+    req.session.isAdmin = true;
+    res.redirect("/admin");
+  } else {
+    res.status(401).send("❌ Erè: Enfòmasyon ou mete yo pa valab!");
+  }
+});
+
+app.get("/admin", verifyAdmin, async (req, res) => {
   const messages = await Message.find().sort({ createdAt: -1 });
   const users = await User.find().sort({ username: 1 });
 
   const dashboardHtml = `
-    <html>
-    <head>
-      <style>
-        body {
-          background: #f4f4f4;
-          font-family: Arial, sans-serif;
-          padding: 30px;
-        }
-        h1, h2 {
-          color: #111;
-        }
-        ul {
-          list-style-type: none;
-          padding: 0;
-        }
-        li {
-          background: #fff;
-          padding: 10px 15px;
-          margin-bottom: 10px;
-          border-radius: 6px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .btn {
-          border: none;
-          padding: 8px 16px;
-          border-radius: 4px;
-          font-weight: bold;
-          cursor: pointer;
-        }
-        .btn-export {
-          background-color: #16a34a;
-          color: white;
-          margin-bottom: 20px;
-        }
-        .btn-delete {
-          background-color: #dc2626;
-          color: white;
-          margin-left: 10px;
-        }
-      </style>
-      <script>
-        async function deleteMessage(id) {
-          const confirmDelete = confirm("Èske ou vle efase mesaj sa?");
-          if (!confirmDelete) return;
-
-          const res = await fetch('/delete-message', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id })
-          });
-          if (res.ok) {
-            window.location.reload();
-          } else {
-            alert("❌ Erè pandan efasman.");
-          }
-        }
-      </script>
-    </head>
-    <body>
+    <div style="padding: 30px; font-family: sans-serif;">
       <h1>✅ Bienvenue administrateur Fobas!</h1>
       <p><strong>Koneksyon fèt:</strong> ${new Date().toLocaleString()}</p>
 
-      <form action="/export" method="GET">
-        <button class="btn btn-export">📁 Telechaje CSV</button>
+      <form action="/export" method="GET" style="margin-bottom: 20px;">
+        <button type="submit" style="padding: 10px 20px; background: green; color: white; border: none;">📁 Telechaje CSV</button>
+      </form>
+
+      <form action="/admin/logout" method="POST" style="margin-bottom: 20px;">
+        <button type="submit" style="padding: 10px 20px; background: #333; color: white; border: none;">🔓 Dekonekte</button>
       </form>
 
       <h2>🗣️ Dènye Mesaj yo</h2>
       <ul>
         ${messages.map(msg => `
           <li>
-            <strong>${msg.sender}:</strong> ${msg.content}
-            <em> (${new Date(msg.createdAt).toLocaleString()})</em>
-            <button class="btn btn-delete" onclick="deleteMessage('${msg._id}')">🗑️ Efase</button>
+            <strong>${msg.sender}:</strong> ${msg.content} (${new Date(msg.createdAt).toLocaleString()})
+            <form method="POST" action="/delete-message" style="display:inline;">
+              <input type="hidden" name="id" value="${msg._id}" />
+              <button type="submit" style="color:red; margin-left:10px;">🗑️ Efase</button>
+            </form>
           </li>
         `).join('')}
       </ul>
@@ -114,22 +102,18 @@ app.get("/admin", async (req, res) => {
       <ul>
         ${users.map(user => `<li>${user.username} - ${user.email}</li>`).join('')}
       </ul>
-    </body>
-    </html>
+    </div>
   `;
   res.send(dashboardHtml);
 });
 
-app.post("/admin", async (req, res) => {
-  const { username, password } = req.body;
-  if (username === ADMIN_USER && password === ADMIN_PASS) {
-    res.redirect("/admin");
-  } else {
-    res.status(401).send("❌ Erè: Enfòmasyon ou mete yo pa valab!");
-  }
+app.post("/admin/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.redirect("/admin/login");
+  });
 });
 
-app.get("/export", async (req, res) => {
+app.get("/export", verifyAdmin, async (req, res) => {
   try {
     const messages = await Message.find().sort({ createdAt: -1 });
     const header = "ID,SENDER,CONTENT,DATE\n";
@@ -147,11 +131,11 @@ app.get("/export", async (req, res) => {
   }
 });
 
-app.post("/delete-message", async (req, res) => {
+app.post("/delete-message", verifyAdmin, async (req, res) => {
   const { id } = req.body;
   try {
     await Message.findByIdAndDelete(id);
-    res.status(200).send("✅ Mesaj efase.");
+    res.redirect("/admin");
   } catch (err) {
     console.error(err);
     res.status(500).send("❌ Erè pandan efasman mesaj la.");
