@@ -1,46 +1,42 @@
 require('dotenv').config(); // Fè sa yon sèl fwa an tèt
 
-
-// 👇 Test si .env byen chaje
-console.log("MONGODB_URI =>", process.env.MONGODB_URI);
-
-app.use(express.static(path.join(__dirname, "public")));
-
-
 const express = require("express");
+const path = require("path");
 const Pusher = require("pusher");
 const cors = require("cors");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
-
-
-// 🟢 AJOUT ROUTE AUTH
-const authRoutes = require('./routes/auth'); // 🟢 Route login/signup
-
+// Kreye app la AVAN ou itilize li
 const app = express();
+
+// Test si .env byen chaje
+console.log("MONGODB_URI =>", process.env.MONGODB_URI);
+
+// MIddleware
 app.use(cors());
 app.use(express.json());
 
+// Servi fichye static nan folder "public"
+app.use(express.static(path.join(__dirname, "public")));
 
+// 🟢 AJOUT ROUTE AUTH
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
 
-// 🟢 AKTIVE ROUTE AUTH
-app.use('/api/auth', authRoutes); // 🟢 Fè route auth lan disponib
-
-// 🔗 Koneksyon ak MongoDB (an sekirite)
+// Konekte ak MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB konekte avèk siksè !"))
   .catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
 
-// ✅ DEFINISYON SCHEMA & MODÈL LA
+// Schemas & Models
 const messageSchema = new mongoose.Schema({
   sender: { type: String, required: true },
   content: { type: String, required: true }
 }, { timestamps: true });
 const Message = mongoose.model("Message", messageSchema);
 
-// ✅ [NOUVO] MODÈL User pou anrejistreman ak modpas
-const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email:    { type: String, required: true, unique: true },
@@ -53,7 +49,7 @@ userSchema.pre('save', async function (next) {
 });
 const User = mongoose.model('User', userSchema);
 
-// 🔐 Pusher konfig
+// Pusher config
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_KEY,
@@ -62,14 +58,13 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-// --- Ajout route GET '/' pou evite 'Cannot GET /' ---
+// Route debaz
 app.get('/', (req, res) => {
   res.send("✅ Sèvè a ap mache kòrèkteman sou Render!");
 });
 
-// ✅ ✅ ✅ AJOUT FINAL KI TRES ENPÒTAN POU RENDER
+// Koute sou PORT
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
   console.log(`✅ Serveur ap koute sou le port ${PORT}`);
 });
