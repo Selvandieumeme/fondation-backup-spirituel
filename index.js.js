@@ -1,9 +1,11 @@
 require('dotenv').config(); // Fè sa yon sèl fwa an tèt
 
-app.use(express.static(path.join(__dirname, "public")));
 
 // 👇 Test si .env byen chaje
 console.log("MONGODB_URI =>", process.env.MONGODB_URI);
+
+app.use(express.static(path.join(__dirname, "public")));
+
 
 const express = require("express");
 const Pusher = require("pusher");
