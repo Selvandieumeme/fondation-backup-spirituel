@@ -8,7 +8,6 @@ const cors = require("cors");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const session = require("express-session");
 
 const app = express();
 
@@ -18,12 +17,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'fobas_super_secret_key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 60 * 60 * 1000 } // 1h
-}));
 
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
@@ -35,37 +28,7 @@ app.get('/', (req, res) => {
 const ADMIN_USER = process.env.ADMIN_USER;
 const ADMIN_PASS = process.env.ADMIN_PASS;
 
-app.get("/admin/login", (req, res) => {
-  res.send(`
-    <form method="POST" action="/admin/login" style="padding: 50px; font-family: sans-serif;">
-      <h2>Connexion Admin</h2>
-      <input type="text" name="username" placeholder="Nom d'utilisateur" required style="padding: 10px; margin: 10px 0; width: 100%;"><br>
-      <input type="password" name="password" placeholder="Mot de passe" required style="padding: 10px; margin: 10px 0; width: 100%;"><br>
-      <button type="submit" style="padding: 10px 20px;">Se connecter</button>
-    </form>
-  `);
-});
-
-app.post("/admin/login", async (req, res) => {
-  const { username, password } = req.body;
-  if (username === ADMIN_USER && password === ADMIN_PASS) {
-    req.session.isAdmin = true;
-    res.redirect("/admin");
-  } else {
-    res.status(401).send("❌ Erè: Enfòmasyon ou mete yo pa valab!");
-  }
-});
-
-app.get("/admin/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.redirect("/admin/login");
-  });
-});
-
 app.get("/admin", async (req, res) => {
-  if (!req.session.isAdmin) {
-    return res.redirect("/admin/login");
-  }
   const messages = await Message.find().sort({ createdAt: -1 });
   const users = await User.find().sort({ username: 1 });
 
@@ -109,11 +72,6 @@ app.get("/admin", async (req, res) => {
           color: white;
           margin-left: 10px;
         }
-        .btn-logout {
-          background-color: #6366f1;
-          color: white;
-          float: right;
-        }
       </style>
       <script>
         async function deleteMessage(id) {
@@ -134,9 +92,6 @@ app.get("/admin", async (req, res) => {
       </script>
     </head>
     <body>
-      <form method="GET" action="/admin/logout">
-        <button class="btn btn-logout">🚪 Dekonekte</button>
-      </form>
       <h1>✅ Bienvenue administrateur Fobas!</h1>
       <p><strong>Koneksyon fèt:</strong> ${new Date().toLocaleString()}</p>
 
@@ -163,6 +118,15 @@ app.get("/admin", async (req, res) => {
     </html>
   `;
   res.send(dashboardHtml);
+});
+
+app.post("/admin", async (req, res) => {
+  const { username, password } = req.body;
+  if (username === ADMIN_USER && password === ADMIN_PASS) {
+    res.redirect("/admin");
+  } else {
+    res.status(401).send("❌ Erè: Enfòmasyon ou mete yo pa valab!");
+  }
 });
 
 app.get("/export", async (req, res) => {
