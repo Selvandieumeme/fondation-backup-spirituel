@@ -8,7 +8,7 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
-const MongoStore = require("connect-mongo"); // ✅ Ajoute pou sove sesyon nan MongoDB
+const MongoStore = require("connect-mongo");
 
 const app = express();
 app.use(cors());
@@ -16,35 +16,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ Sèvi ak session pou otantifikasyon admin lan (soti nan MongoDB kounye a)
 app.use(
   session({
-    secret: 'fobas_session_secret_key', // Ou ka mete sa nan .env tou pou plis sekirite
+    secret: 'fobas_session_secret_key',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }), // ✅ Store sesyon yo nan MongoDB
-    cookie: { maxAge: 3600000 }, // 1 èdtan
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    cookie: { maxAge: 3600000 },
   })
 );
 
-
-// ✅ Log aksè yo
 app.use((req, res, next) => {
   const logLine = `${new Date().toISOString()} | IP: ${req.ip} | Path: ${req.path}\n`;
   fs.appendFileSync("access-log.txt", logLine);
   next();
 });
 
-// ✅ Chemen sekirite admin lan
 const SECURE_ADMIN_PATH = "/kontwol-fobas-sekirite";
-
-// ✅ Règle sekirite
 const ADMIN_USER = process.env.ADMIN_USER;
 const ADMIN_PASS = process.env.ADMIN_PASS;
 const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
 const ALLOWED_IP = process.env.ALLOWED_ADMIN_IP;
 
-// ✅ Aksè sèlman si IP a valab
+let failedAttempts = 0;
+
 app.use((req, res, next) => {
   const realIP =
     req.headers["x-forwarded-for"] ||
@@ -60,41 +55,38 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Fòm pou antre kòd admin lan
 app.get(SECURE_ADMIN_PATH, (req, res) => {
-  if (req.session && req.session.isAdmin) {
+  if (req.session && req.session.isAdmin) return res.redirect("/admin");
+  if (failedAttempts >= 3) return res.status(403).send("❌ Ou depase 3 tantativ. Ou bloke.");
+
+  res.send(`
+    <html><body style="font-family:sans-serif; padding:30px">
+      <h2>🔐 Login Admin (3 eleman)</h2>
+      <form method="POST" action="${SECURE_ADMIN_PATH}">
+        <input name="username" type="text" placeholder="Non itilizatè" required /><br><br>
+        <input name="password" type="password" placeholder="Modpas" required /><br><br>
+        <input name="secret" type="text" placeholder="Kòd sekrè" required /><br><br>
+        <button type="submit">Antre</button>
+      </form>
+      <p>Tantativ echwe: ${failedAttempts}/3</p>
+    </body></html>
+  `);
+});
+
+app.post(SECURE_ADMIN_PATH, (req, res) => {
+  const { username, password, secret } = req.body;
+  if (username === ADMIN_USER && password === ADMIN_PASS && secret === ADMIN_SECRET_CODE) {
+    req.session.isAdmin = true;
+    failedAttempts = 0;
     return res.redirect("/admin");
   }
-
-  const loginHtml = `
-    <html>
-    <head>
-      <title>Kontwòl Sekirite Fobas</title>
-    </head>
-    <body style="font-family: sans-serif; padding: 30px">
-      <h2>🔐 Antre Kòd Sekrè Administratè</h2>
-      <form method="POST" action="${SECURE_ADMIN_PATH}">
-        <input type="password" name="secret" placeholder="Antre kòd la" required />
-        <button type="submit">✅ Antre</button>
-      </form>
-    </body>
-    </html>
-  `;
-  res.send(loginHtml);
-});
-
-// ✅ Tretman kòd sekrè admin lan
-app.post(SECURE_ADMIN_PATH, (req, res) => {
-  const secret = req.body.secret;
-  if (secret === ADMIN_SECRET_CODE) {
-    req.session.isAdmin = true;
-    res.redirect("/admin");
-  } else {
-    res.status(401).send("❌ Kòd sa pa kòrèk.");
+  failedAttempts++;
+  if (failedAttempts >= 3) {
+    return res.status(403).send("❌ Depase 3 tantativ. Ou bloke.");
   }
+  res.status(401).send(`❌ Antre pa valid. Tantativ echwe: ${failedAttempts}/3`);
 });
 
-// ✅ Dashboard admin lan
 app.get("/admin", async (req, res) => {
   if (!req.session || !req.session.isAdmin) {
     return res.status(403).send("❌ Aksè entèdi.");
@@ -150,14 +142,12 @@ app.get("/admin", async (req, res) => {
   res.send(dashboardHtml);
 });
 
-// ✅ Logout admin
 app.get("/logout", (req, res) => {
   req.session.destroy(() => {
     res.send("✅ Ou soti nan sesyon admin ou avèk siksè.");
   });
 });
 
-// ✅ Login ak kòd sekrè (sistem vye fòm si ou vle konsève li)
 app.post("/admin", async (req, res) => {
   const { username, password, code } = req.body;
   if (
@@ -172,7 +162,6 @@ app.post("/admin", async (req, res) => {
   }
 });
 
-// ✅ Export CSV
 app.get("/export", async (req, res) => {
   try {
     const messages = await Message.find().sort({ createdAt: -1 });
@@ -189,7 +178,6 @@ app.get("/export", async (req, res) => {
   }
 });
 
-// ✅ Efase mesaj
 app.post("/delete-message", async (req, res) => {
   const { id } = req.body;
   try {
@@ -201,7 +189,6 @@ app.post("/delete-message", async (req, res) => {
   }
 });
 
-// ✅ Rès API yo
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
@@ -209,12 +196,10 @@ app.get('/', (req, res) => {
   res.send("✅ API Chat Fobas ap mache kòrèkteman sou Render!");
 });
 
-// ✅ MongoDB koneksyon
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB konekte avèk siksè !"))
   .catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
 
-// ✅ Modèl
 const messageSchema = new mongoose.Schema({
   sender: { type: String, required: true },
   content: { type: String, required: true }
@@ -233,7 +218,6 @@ userSchema.pre('save', async function (next) {
 });
 const User = mongoose.model('User', userSchema);
 
-// ✅ Pusher
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_KEY,
@@ -242,7 +226,6 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-// ✅ Start Serveur
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Serveur ap koute sou le port ${PORT}`);
