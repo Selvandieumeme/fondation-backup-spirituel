@@ -231,10 +231,11 @@
       encrypted: true
     });
 
-    const channel = pusher.subscribe("my-channel");
+   const channel = pusher.subscribe("public-chat");
 
-    channel.bind("my-event", function(data) {
-      if (!data.message) return;
+channel.bind("new-message", function(data) {
+  ajouteMesajTekst(netwaye(data.message));
+});
 
       // Ajoute mesaj ki sòti nan Pusher
       ajouteMesajTekst(netwaye(data.message));
