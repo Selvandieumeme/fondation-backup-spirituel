@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-/ ✅ Sèvi ak session pou otantifikasyon admin lan (soti nan MongoDB kounye a)
+// ✅ Sèvi ak session pou otantifikasyon admin lan (soti nan MongoDB kounye a)
 app.use(
   session({
     secret: 'fobas_session_secret_key', // Ou ka mete sa nan .env tou pou plis sekirite
