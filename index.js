@@ -2,8 +2,6 @@ require('dotenv').config(); // Fè sa yon sèl fwa an tèt
 
 
 
-require('dotenv').config();
-
 const express = require("express");
 const path = require("path");
 const Pusher = require("pusher");
