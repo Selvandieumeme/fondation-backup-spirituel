@@ -233,28 +233,23 @@ app.listen(PORT, () => {
 
 
 
-// ✅ Resevwa mesaj chat piblik epi voye li bay tout moun
+// Resevwa mesaj chat piblik epi anrejistre + pouse li atravè Pusher
 app.post("/public-chat", async (req, res) => {
   const { sender, content } = req.body;
-
   if (!sender || !content) {
     return res.status(400).send("❌ Sender ak content obligatwa.");
   }
-
   try {
     const newMessage = await Message.create({ sender, content });
-
-    // ✅ Voye mesaj la atravè Pusher bay tout moun
     pusher.trigger("public-chat", "new-message", {
       _id: newMessage._id,
       sender: newMessage.sender,
       content: newMessage.content,
       createdAt: newMessage.createdAt
     });
-
     res.status(200).send("✅ Mesaj voye avèk siksè!");
   } catch (err) {
-    console.error("❌ Erè pandan voye mesaj:", err);
+    console.error(err);
     res.status(500).send("❌ Erè entèwn.");
   }
 });
