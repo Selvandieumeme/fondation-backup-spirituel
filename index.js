@@ -247,37 +247,7 @@ app.post("/public-chat", async (req, res) => {
 
 
 
-    const boutonVoye = document.getElementById("btn-voye");
-
-boutonVoye.addEventListener("click", () => {
-  const mesaj = document.getElementById("mesaj").value.trim();
-  if (mesaj === "") return;
-
-  fetch("https://chat-en-direct-fobas.onrender.com/public-chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      sender: "Anonim",   // Ou ka mete yon varyab si ou gen sesyon
-      content: mesaj
-    })
-  })
-  .then(res => res.text())  // Paske repons lan se yon string, pa JSON
-  .then(() => {
-    ajouteMesajTekst(mesaj); // Afiche mesaj sou ekran ou
-    document.getElementById("mesaj").value = ""; // Vide kare tèks la
-  })
-  .catch(err => {
-    alert("❌ Mesaj la pa rive voye. Tcheke koneksyon.");
-    console.error(err);
-  });
-});
-
-
-
-
-    // ✅ Resevwa mesaj chat piblik epi voye li bay tout moun
+   // ✅ Resevwa mesaj chat piblik epi voye li bay tout moun
 app.post("/public-chat", async (req, res) => {
   const { sender, content } = req.body;
 
@@ -303,7 +273,6 @@ app.post("/public-chat", async (req, res) => {
   }
 });
 
-
 // ✅ Ajoute route /send pou frontend la ka kontinye mache
 app.post("/send", async (req, res) => {
   const { message } = req.body;
@@ -326,4 +295,4 @@ app.post("/send", async (req, res) => {
     console.error("❌ Erè pandan voye mesaj nan /send:", err);
     res.status(500).json({ sent: false });
   }
-});
+}); 
