@@ -244,20 +244,6 @@ app.post("/public-chat", async (req, res) => {
   try {
     const newMessage = await Message.create({ sender, content });
 
-
-
-
-   // ✅ Resevwa mesaj chat piblik epi voye li bay tout moun
-app.post("/public-chat", async (req, res) => {
-  const { sender, content } = req.body;
-
-  if (!sender || !content) {
-    return res.status(400).send("❌ Sender ak content obligatwa.");
-  }
-
-  try {
-    const newMessage = await Message.create({ sender, content });
-
     // ✅ Voye mesaj la atravè Pusher bay tout moun
     pusher.trigger("public-chat", "new-message", {
       _id: newMessage._id,
@@ -272,27 +258,3 @@ app.post("/public-chat", async (req, res) => {
     res.status(500).send("❌ Erè entèwn.");
   }
 });
-
-// ✅ Ajoute route /send pou frontend la ka kontinye mache
-app.post("/send", async (req, res) => {
-  const { message } = req.body;
-
-  if (!message) {
-    return res.status(400).json({ sent: false });
-  }
-
-  try {
-    // ✅ Voye mesaj la atravè Pusher
-    pusher.trigger("public-chat", "new-message", {
-      sender: "Anonim",
-      content: message,
-      createdAt: new Date().toISOString()
-    });
-
-    // ✅ Repons JSON ke frontend ou ap tann
-    res.json({ sent: true });
-  } catch (err) {
-    console.error("❌ Erè pandan voye mesaj nan /send:", err);
-    res.status(500).json({ sent: false });
-  }
-}); 
