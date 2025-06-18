@@ -230,3 +230,31 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Serveur ap koute sou le port ${PORT}`);
 });
+
+
+
+// ✅ Resevwa mesaj chat piblik epi voye li bay tout moun
+app.post("/public-chat", async (req, res) => {
+  const { sender, content } = req.body;
+
+  if (!sender || !content) {
+    return res.status(400).send("❌ Sender ak content obligatwa.");
+  }
+
+  try {
+    const newMessage = await Message.create({ sender, content });
+
+    // ✅ Voye mesaj la atravè Pusher bay tout moun
+    pusher.trigger("public-chat", "new-message", {
+      _id: newMessage._id,
+      sender: newMessage.sender,
+      content: newMessage.content,
+      createdAt: newMessage.createdAt
+    });
+
+    res.status(200).send("✅ Mesaj voye avèk siksè!");
+  } catch (err) {
+    console.error("❌ Erè pandan voye mesaj:", err);
+    res.status(500).send("❌ Erè entèwn.");
+  }
+});
