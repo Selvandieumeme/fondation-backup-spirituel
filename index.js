@@ -8,6 +8,7 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const MongoStore = require("connect-mongo"); // ✅ Ajoute pou sove sesyon nan MongoDB
 
 const app = express();
 app.use(cors());
@@ -15,13 +16,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ Sèvi ak session pou otantifikasyon admin lan
-app.use(session({
-  secret: 'fobas_session_secret_key', // Chanje sa ak yon kòd sekrè pi fò
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 3600000 } // 1 èdtan
-}));
+/ ✅ Sèvi ak session pou otantifikasyon admin lan (soti nan MongoDB kounye a)
+app.use(
+  session({
+    secret: 'fobas_session_secret_key', // Ou ka mete sa nan .env tou pou plis sekirite
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }), // ✅ Store sesyon yo nan MongoDB
+    cookie: { maxAge: 3600000 }, // 1 èdtan
+  })
+);
+
 
 // ✅ Log aksè yo
 app.use((req, res, next) => {
