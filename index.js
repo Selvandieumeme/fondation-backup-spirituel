@@ -168,3 +168,49 @@ app.post("/send", (req, res) => {
 // --- Start serve ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Serveur koute sou ${PORT}`));
+
+
+
+
+<script>
+  const boutonVoye = document.getElementById("btn-voye");
+  const kareMesaj = document.getElementById("mesaj");
+  const lisMesaj = document.getElementById("lis-mesaj");
+
+  boutonVoye.addEventListener("click", () => {
+    const mesaj = kareMesaj.value.trim();
+    if (mesaj === "") return;
+
+    fetch("https://chat-en-direct-fobas.onrender.com/public-chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        sender: "Anonim",
+        content: mesaj
+      })
+    })
+    .then(res => res.text())
+    .then(() => {
+      ajouteMesajTekst(mesaj);
+      kareMesaj.value = "";
+    })
+    .catch(err => {
+      alert("❌ Mesaj la pa rive voye. Tcheke koneksyon.");
+      console.error(err);
+    });
+  });
+
+  function ajouteMesajTekst(msg) {
+    const li = document.createElement("li");
+    li.textContent = "Anonim: " + msg;
+    lisMesaj.appendChild(li);
+  }
+</script>
+
+
+
+<input id="mesaj" placeholder="Tape mesaj ou..." />
+<button id="btn-voye">Voye</button>
+<ul id="lis-mesaj"></ul>
