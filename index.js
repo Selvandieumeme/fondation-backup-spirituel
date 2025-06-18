@@ -7,12 +7,21 @@ const cors = require("cors");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const session = require("express-session");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+
+// ✅ Sèvi ak session pou otantifikasyon admin lan
+app.use(session({
+  secret: 'fobas_session_secret_key', // Chanje sa ak yon kòd sekrè pi fò
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 3600000 } // 1 èdtan
+}));
 
 // ✅ Log aksè yo
 app.use((req, res, next) => {
@@ -30,8 +39,8 @@ const ADMIN_PASS = process.env.ADMIN_PASS;
 const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
 const ALLOWED_IP = process.env.ALLOWED_ADMIN_IP;
 
-// ✅ Aksè ak fòm sekirite admin lan + verifikasyon IP
-app.get(SECURE_ADMIN_PATH, (req, res) => {
+// ✅ Aksè sèlman si IP a valab
+app.use((req, res, next) => {
   const realIP =
     req.headers["x-forwarded-for"] ||
     req.connection.remoteAddress ||
@@ -43,6 +52,14 @@ app.get(SECURE_ADMIN_PATH, (req, res) => {
   if (ALLOWED_IP !== "*" && !realIP.includes(ALLOWED_IP)) {
     return res.status(403).send("❌ Ou pa gen dwa antre isit la");
   }
+  next();
+});
+
+// ✅ Fòm pou antre kòd admin lan
+app.get(SECURE_ADMIN_PATH, (req, res) => {
+  if (req.session && req.session.isAdmin) {
+    return res.redirect("/admin");
+  }
 
   const loginHtml = `
     <html>
@@ -51,7 +68,7 @@ app.get(SECURE_ADMIN_PATH, (req, res) => {
     </head>
     <body style="font-family: sans-serif; padding: 30px">
       <h2>🔐 Antre Kòd Sekrè Administratè</h2>
-      <form method="POST" action="/${SECURE_ADMIN_PATH.replace('/', '')}">
+      <form method="POST" action="${SECURE_ADMIN_PATH}">
         <input type="password" name="secret" placeholder="Antre kòd la" required />
         <button type="submit">✅ Antre</button>
       </form>
@@ -61,10 +78,11 @@ app.get(SECURE_ADMIN_PATH, (req, res) => {
   res.send(loginHtml);
 });
 
-// ✅ Tcheke si kòd sekrè admin lan kòrèk
+// ✅ Tretman kòd sekrè admin lan
 app.post(SECURE_ADMIN_PATH, (req, res) => {
   const secret = req.body.secret;
   if (secret === ADMIN_SECRET_CODE) {
+    req.session.isAdmin = true;
     res.redirect("/admin");
   } else {
     res.status(401).send("❌ Kòd sa pa kòrèk.");
@@ -73,6 +91,10 @@ app.post(SECURE_ADMIN_PATH, (req, res) => {
 
 // ✅ Dashboard admin lan
 app.get("/admin", async (req, res) => {
+  if (!req.session || !req.session.isAdmin) {
+    return res.status(403).send("❌ Aksè entèdi.");
+  }
+
   const messages = await Message.find().sort({ createdAt: -1 });
   const users = await User.find().sort({ username: 1 });
 
@@ -123,7 +145,14 @@ app.get("/admin", async (req, res) => {
   res.send(dashboardHtml);
 });
 
-// ✅ Login ak kòd sekrè
+// ✅ Logout admin
+app.get("/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.send("✅ Ou soti nan sesyon admin ou avèk siksè.");
+  });
+});
+
+// ✅ Login ak kòd sekrè (sistem vye fòm si ou vle konsève li)
 app.post("/admin", async (req, res) => {
   const { username, password, code } = req.body;
   if (
@@ -131,7 +160,8 @@ app.post("/admin", async (req, res) => {
     password === ADMIN_PASS &&
     code === ADMIN_SECRET_CODE
   ) {
-    res.redirect(SECURE_ADMIN_PATH);
+    req.session.isAdmin = true;
+    res.redirect("/admin");
   } else {
     res.status(401).send("❌ Enfòmasyon ou mete yo pa valab!");
   }
