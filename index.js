@@ -16,6 +16,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
+// ✅ Asire chat-log.txt egziste
+const chatLogPath = path.join(__dirname, "chat-log.txt");
+if (!fs.existsSync(chatLogPath)) {
+  fs.writeFileSync(chatLogPath, "", "utf8");
+}
+
 app.use(
   session({
     secret: 'fobas_session_secret_key',
@@ -230,8 +236,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Serveur ap koute sou le port ${PORT}`);
 });
-
-
 
 // ✅ Resevwa mesaj chat piblik epi voye li bay tout moun
 app.post("/public-chat", async (req, res) => {
