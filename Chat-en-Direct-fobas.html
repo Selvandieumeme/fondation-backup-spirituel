@@ -359,26 +359,26 @@
       return;
     }
 
-    fetch("https://chat-en-direct-fobas.onrender.com/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert("✅ Konto ou kreye! Tanpri verifye email ou pou aktive li.");
-        closeModal();
-      } else {
-        alert("❌ " + data.message);
-      }
-    })
-    .catch(err => {
-      console.error("Erè:", err);
-      alert("❌ Enskripsyon pa mache. Tcheke koneksyon.");
-    });
-  }
+    fetch("https://chat-en-direct-fobas.onrender.com/api/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert("✅ Kont kreye! Tanpri verifye imel ou.");
+      closeModal();
+    } else {
+      alert("❌ " + data.message);
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("❌ Erè pandan enskripsyon.");
+  });
+}
 </script>
-
+  
 </body>
 </html>
