@@ -340,5 +340,45 @@
       document.getElementById('modal-signup').style.display = 'none';
     }
   </script>
+
+
+  <script>
+  function submitSignup() {
+    const name = document.getElementById("signup-name").value.trim();
+    const email = document.getElementById("signup-email").value.trim();
+    const password = document.getElementById("signup-password").value.trim();
+    const confirm = document.getElementById("signup-confirm").value.trim();
+
+    if (!name || !email || !password || !confirm) {
+      alert("Tanpri ranpli tout chan yo.");
+      return;
+    }
+
+    if (password !== confirm) {
+      alert("Modpas yo pa menm!");
+      return;
+    }
+
+    fetch("https://chat-en-direct-fobas.onrender.com/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("✅ Konto ou kreye! Tanpri verifye email ou pou aktive li.");
+        closeModal();
+      } else {
+        alert("❌ " + data.message);
+      }
+    })
+    .catch(err => {
+      console.error("Erè:", err);
+      alert("❌ Enskripsyon pa mache. Tcheke koneksyon.");
+    });
+  }
+</script>
+
 </body>
 </html>
