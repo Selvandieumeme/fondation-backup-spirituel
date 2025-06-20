@@ -11,6 +11,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const axios = require("axios");
 
 const app = express();
 app.use(cors());
@@ -28,12 +29,14 @@ app.use(
   })
 );
 
+// ✅ Log IP & chemen chak vizit
 app.use((req, res, next) => {
   const logLine = `${new Date().toISOString()} | IP: ${req.ip} | Path: ${req.path}\n`;
   fs.appendFileSync("access-log.txt", logLine);
   next();
 });
 
+// ✅ Sekirite Admin
 const SECURE_ADMIN_PATH = "/kontwol-fobas-sekirite";
 const ADMIN_USER = process.env.ADMIN_USER;
 const ADMIN_PASS = process.env.ADMIN_PASS;
@@ -43,42 +46,41 @@ const ALLOWED_IP = process.env.ALLOWED_ADMIN_IP;
 let failedAttempts = 0;
 
 app.use((req, res, next) => {
-  const realIP =
-    req.headers["x-forwarded-for"] ||
+  const realIP = req.headers["x-forwarded-for"] ||
     req.connection.remoteAddress ||
     req.socket.remoteAddress ||
     (req.connection.socket ? req.connection.socket.remoteAddress : null);
 
-  console.log("?? Vre IP kap eseye antre:", realIP);
+  console.log("🔍 Vre IP kap eseye antre:", realIP);
 
   if (ALLOWED_IP !== "*" && !realIP.includes(ALLOWED_IP)) {
-    return res.status(403).send("? Ou pa gen dwa antre isit la");
+    return res.status(403).send("❌ Ou pa gen dwa antre isit la");
   }
   next();
 });
 
-
+// ✅ Verify email via token
 app.get("/verify", async (req, res) => {
   const token = req.query.token;
   const user = await User.findOne({ token });
 
   if (!user) {
-    return res.status(400).send("Token invalide");
+    return res.status(400).send("❌ Token verifikasyon pa valab.");
   }
 
   user.verified = true;
   await user.save();
-
-  res.send("✅ Votre email a été confirmé avec succès !");
+  res.send("✅ Email ou konfime ak siksè !");
 });
 
+// ✅ Fòm Login Admin
 app.get(SECURE_ADMIN_PATH, (req, res) => {
   if (req.session && req.session.isAdmin) return res.redirect("/admin");
-  if (failedAttempts >= 3) return res.status(403).send("? Ou depase 3 tantativ. Ou bloke.");
+  if (failedAttempts >= 3) return res.status(403).send("❌ Ou bloke aprè 3 tantativ.");
 
   res.send(`
     <html><body style="font-family:sans-serif; padding:30px">
-      <h2>?? Login Admin (3 eleman)</h2>
+      <h2>🔐 Login Admin (3 eleman)</h2>
       <form method="POST" action="${SECURE_ADMIN_PATH}">
         <input name="username" type="text" placeholder="Non itilizatè" required /><br><br>
         <input name="password" type="password" placeholder="Modpas" required /><br><br>
@@ -90,6 +92,7 @@ app.get(SECURE_ADMIN_PATH, (req, res) => {
   `);
 });
 
+// ✅ Post login admin
 app.post(SECURE_ADMIN_PATH, (req, res) => {
   const { username, password, secret } = req.body;
   if (username === ADMIN_USER && password === ADMIN_PASS && secret === ADMIN_SECRET_CODE) {
@@ -99,14 +102,15 @@ app.post(SECURE_ADMIN_PATH, (req, res) => {
   }
   failedAttempts++;
   if (failedAttempts >= 3) {
-    return res.status(403).send("? Depase 3 tantativ. Ou bloke.");
+    return res.status(403).send("❌ Depase 3 tantativ. Ou bloke.");
   }
-  res.status(401).send(`? Antre pa valid. Tantativ echwe: ${failedAttempts}/3`);
+  res.status(401).send(`❌ Antre pa valid. Tantativ echwe: ${failedAttempts}/3`);
 });
 
+// ✅ Dashboard Admin
 app.get("/admin", async (req, res) => {
   if (!req.session || !req.session.isAdmin) {
-    return res.status(403).send("? Aksè entèdi.");
+    return res.status(403).send("❌ Aksè entèdi.");
   }
 
   const messages = await Message.find().sort({ createdAt: -1 });
@@ -126,30 +130,29 @@ app.get("/admin", async (req, res) => {
       </style>
       <script>
         async function deleteMessage(id) {
-          if (!confirm("Èske ou vle efase mesaj sa?")) return;
+          if (!confirm("Efase mesaj sa?")) return;
           const res = await fetch('/delete-message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id })
           });
           if (res.ok) window.location.reload();
-          else alert("? Erè pandan efasman.");
+          else alert("❌ Erè pandan efasman.");
         }
       </script>
     </head>
     <body>
-      <h1>? Bienvenue administratè Fobas!</h1>
-      <p><strong>Koneksyon fèt:</strong> ${new Date().toLocaleString()}</p>
+      <h1>✅ Bienvenue administratè Fobas!</h1>
       <form action="/export" method="GET">
-        <button class="btn btn-export">?? Telechaje CSV</button>
+        <button class="btn btn-export">📁 Telechaje CSV</button>
       </form>
-      <h2>??? Dènye Mesaj yo</h2>
+      <h2>🗣️ Dènye Mesaj yo</h2>
       <ul>
         ${messages.map(msg => `
           <li><strong>${msg.sender}:</strong> ${msg.content} <em> (${new Date(msg.createdAt).toLocaleString()})</em>
-          <button class="btn btn-delete" onclick="deleteMessage('${msg._id}')">??? Efase</button></li>`).join('')}
+          <button class="btn btn-delete" onclick="deleteMessage('${msg._id}')">🗑️ Efase</button></li>`).join('')}
       </ul>
-      <h2>?? Lis Itilizatè yo</h2>
+      <h2>👥 Itilizatè yo</h2>
       <ul>
         ${users.map(user => `<li>${user.username} - ${user.email}</li>`).join('')}
       </ul>
@@ -159,26 +162,14 @@ app.get("/admin", async (req, res) => {
   res.send(dashboardHtml);
 });
 
+// ✅ Logout admin
 app.get("/logout", (req, res) => {
   req.session.destroy(() => {
-    res.send("? Ou soti nan sesyon admin ou avèk siksè.");
+    res.send("✅ Ou soti nan sesyon admin la.");
   });
 });
 
-app.post("/admin", async (req, res) => {
-  const { username, password, code } = req.body;
-  if (
-    username === ADMIN_USER &&
-    password === ADMIN_PASS &&
-    code === ADMIN_SECRET_CODE
-  ) {
-    req.session.isAdmin = true;
-    res.redirect("/admin");
-  } else {
-    res.status(401).send("? Enfòmasyon ou mete yo pa valab!");
-  }
-});
-
+// ✅ Re-ekspòt CSV
 app.get("/export", async (req, res) => {
   try {
     const messages = await Message.find().sort({ createdAt: -1 });
@@ -186,37 +177,62 @@ app.get("/export", async (req, res) => {
     const rows = messages.map(m => {
       return `"${m._id}","${m.sender}","${m.content.replace(/"/g, '""')}","${m.createdAt.toISOString()}"`;
     }).join("\n");
+
     res.header("Content-Type", "text/csv");
     res.attachment("messages.csv");
     return res.send(header + rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send("? Erè pandan ekspòtasyon CSV.");
+    res.status(500).send("❌ Erè pandan ekspòtasyon CSV.");
   }
 });
 
+// ✅ Efase mesaj
 app.post("/delete-message", async (req, res) => {
   const { id } = req.body;
   try {
     await Message.findByIdAndDelete(id);
-    res.status(200).send("? Mesaj efase.");
+    res.status(200).send("✅ Mesaj efase.");
   } catch (err) {
     console.error(err);
-    res.status(500).send("? Erè pandan efasman mesaj la.");
+    res.status(500).send("❌ Erè pandan efasman mesaj.");
   }
 });
 
+// ✅ Route Auth (Login/Register)
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
-app.get('/', (req, res) => {
-  res.send("? API Chat Fobas ap mache kòrèkteman sou Render!");
+// ✅ Resevwa mesaj chat piblik
+app.post("/public-chat", async (req, res) => {
+  const { sender, content } = req.body;
+  if (!sender || !content) return res.status(400).send("❌ Sender ak content obligatwa.");
+  try {
+    const newMessage = await Message.create({ sender, content });
+    pusher.trigger("public-chat", "new-message", {
+      _id: newMessage._id,
+      sender: newMessage.sender,
+      content: newMessage.content,
+      createdAt: newMessage.createdAt
+    });
+    res.status(200).send("✅ Mesaj voye avèk siksè!");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("❌ Erè entèwn.");
+  }
 });
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("? MongoDB konekte avèk siksè !"))
-  .catch(err => console.error("? Erè koneksyon MongoDB:", err));
+// ✅ API test route
+app.get("/", (req, res) => {
+  res.send("✅ API Chat Fobas ap mache sou Render!");
+});
 
+// ✅ MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("✅ MongoDB konekte avèk siksè!"))
+  .catch(err => console.error("❌ Erè koneksyon MongoDB:", err));
+
+// ✅ Mongoose Models
 const messageSchema = new mongoose.Schema({
   sender: { type: String, required: true },
   content: { type: String, required: true }
@@ -226,15 +242,18 @@ const Message = mongoose.model("Message", messageSchema);
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email:    { type: String, required: true, unique: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
+  token:    { type: String },
+  verified: { type: Boolean, default: false }
 });
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
+// ✅ Pusher
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_KEY,
@@ -243,44 +262,7 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`? Serveur ap koute sou le port ${PORT}`);
-});
-
-
-
-// ? Resevwa mesaj chat piblik epi voye li bay tout moun
-app.post("/public-chat", async (req, res) => {
-  const { sender, content } = req.body;
-
-  if (!sender || !content) {
-    return res.status(400).send("? Sender ak content obligatwa.");
-  }
-
-  try {
-    const newMessage = await Message.create({ sender, content });
-
-    // ? Voye mesaj la atravè Pusher bay tout moun
-    pusher.trigger("public-chat", "new-message", {
-      _id: newMessage._id,
-      sender: newMessage.sender,
-      content: newMessage.content,
-      createdAt: newMessage.createdAt
-    });
-
-    res.status(200).send("? Mesaj voye avèk siksè!");
-  } catch (err) {
-    console.error("? Erè pandan voye mesaj:", err);
-    res.status(500).send("? Erè entèwn.");
-  }
-});
-
-
-
-
-const axios = require("axios");
-
+// ✅ EmailJS confirmation
 async function sendConfirmationEmail(user) {
   const verificationLink = `https://chat-en-direct-fobas.onrender.com/verify?token=${user.token}`;
 
@@ -304,3 +286,8 @@ async function sendConfirmationEmail(user) {
   }
 }
 
+// ✅ Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Serveur ap koute sou le port ${PORT}`);
+});
