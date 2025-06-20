@@ -275,3 +275,32 @@ app.post("/public-chat", async (req, res) => {
     res.status(500).send("? Erè entèwn.");
   }
 });
+
+
+
+
+const axios = require("axios");
+
+async function sendConfirmationEmail(user) {
+  const verificationLink = `https://chat-en-direct-fobas.onrender.com/verify?token=${user.token}`;
+
+  const payload = {
+    service_id: "service_mfvqpii",
+    template_id: "template_fe72dtu",
+    user_id: "NohkM1JRPz8WayHup",
+    template_params: {
+      name: user.username,
+      email: user.email,
+      token: user.token,
+      verification_link: verificationLink
+    }
+  };
+
+  try {
+    await axios.post("https://api.emailjs.com/api/v1.0/email/send", payload);
+    console.log("✅ Email konfimasyon voye");
+  } catch (err) {
+    console.error("❌ Erè pandan voye email konfimasyon:", err.message);
+  }
+}
+
