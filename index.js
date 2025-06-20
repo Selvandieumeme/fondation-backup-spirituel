@@ -262,31 +262,43 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-user.token = token;
-await user.save();
 
-const verificationLink = `https://chat-en-direct-fobas.onrender.com/verify?token=${token}`;
+app.post("/register", async (req, res) => {
+  const { username, email, password } = req.body;
+
+  const existing = await User.findOne({ email });
+  if (existing) return res.status(400).send("❌ Email sa deja egziste.");
+
+  const user = new User({ username, email, password });
+
+  const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  user.token = token;
+
+  await user.save(); // ✅ OK, paske nou anndan async function
+
+  const verificationLink = `https://chat-en-direct-fobas.onrender.com/verify?token=${token}`;
 
   const payload = {
     service_id: process.env.EMAILJS_SERVICE_ID,
-template_id: process.env.EMAILJS_TEMPLATE_ID,
-user_id: process.env.EMAILJS_USER_ID,
+    template_id: process.env.EMAILJS_TEMPLATE_ID,
+    user_id: process.env.EMAILJS_USER_ID,
     template_params: {
-      name: user.username,
-      email: user.email,
-      token: user.token,
-      verification_link: verificationLink
-    }
+      name: username,
+      email: email,
+      token: token,
+      verification_link: verificationLink,
+    },
   };
 
   try {
     await axios.post("https://api.emailjs.com/api/v1.0/email/send", payload);
-    console.log("✅ Email konfimasyon voye");
+    res.status(200).send("✅ Enskripsyon fèt. Tanpri verifye email ou.");
   } catch (err) {
-    console.error("❌ Erè pandan voye email konfimasyon:", err.message);
+    console.error("❌ Erè pandan envoi email:", err);
+    res.status(500).send("❌ Erè pandan envoi email.");
   }
-}
+});
+
 
 // ✅ Start server
 const PORT = process.env.PORT || 3000;
