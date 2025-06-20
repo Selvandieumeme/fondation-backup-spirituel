@@ -62,7 +62,7 @@
           alert(result.message || "Compte créé. Vérifiez votre e-mail.");
           verifyForm.style.display = 'block';
         } else {
-          alert(result.error || "Une erreur est survenue !");
+          alert(result.message || "Une erreur est survenue !");
         }
 
       } catch (error) {
@@ -74,6 +74,8 @@
       }
     });
 
+    // ❗ ATANSYON: route verify-email sa a pa egziste sou backend ou
+    // Si ou vle verifye ak kòd, ou dwe kreye route sa nan auth.js
     verifyButton.addEventListener('click', async () => {
       const code = document.getElementById('code').value.trim();
 
@@ -90,7 +92,7 @@
           alert("E-mail validé avec succès.");
           window.location.href = "login.html";
         } else {
-          alert(result.error || "Code incorrect.");
+          alert(result.message || "Code incorrect.");
         }
       } catch (err) {
         alert("Erreur lors de la vérification : " + err.message);
