@@ -262,9 +262,11 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-// ✅ EmailJS confirmation
-async function sendConfirmationEmail(user) {
-  const verificationLink = `https://chat-en-direct-fobas.onrender.com/verify?token=${user.token}`;
+const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+user.token = token;
+await user.save();
+
+const verificationLink = `https://chat-en-direct-fobas.onrender.com/verify?token=${token}`;
 
   const payload = {
     service_id: process.env.EMAILJS_SERVICE_ID,
