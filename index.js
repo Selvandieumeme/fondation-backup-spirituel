@@ -267,9 +267,9 @@ async function sendConfirmationEmail(user) {
   const verificationLink = `https://chat-en-direct-fobas.onrender.com/verify?token=${user.token}`;
 
   const payload = {
-    service_id: "service_mfvqpii",
-    template_id: "template_fe72dtu",
-    user_id: "NohkM1JRPz8WayHup",
+    service_id: process.env.EMAILJS_SERVICE_ID,
+template_id: process.env.EMAILJS_TEMPLATE_ID,
+user_id: process.env.EMAILJS_USER_ID,
     template_params: {
       name: user.username,
       email: user.email,
