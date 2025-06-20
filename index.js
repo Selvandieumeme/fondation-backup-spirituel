@@ -57,6 +57,21 @@ app.use((req, res, next) => {
   next();
 });
 
+
+app.get("/verify", async (req, res) => {
+  const token = req.query.token;
+  const user = await User.findOne({ token });
+
+  if (!user) {
+    return res.status(400).send("Token invalide");
+  }
+
+  user.verified = true;
+  await user.save();
+
+  res.send("✅ Votre email a été confirmé avec succès !");
+});
+
 app.get(SECURE_ADMIN_PATH, (req, res) => {
   if (req.session && req.session.isAdmin) return res.redirect("/admin");
   if (failedAttempts >= 3) return res.status(403).send("? Ou depase 3 tantativ. Ou bloke.");
