@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "npm install axios"
   },
   "dependencies": {
     "axios": "^1.10.0",
@@ -22,10 +23,4 @@
     "pusher": "^5.0.0",
     "socket.io": "^4.8.1"
   }
-}
-
-
-"scripts": {
-  "start": "node index.js",
-  "postinstall": "npm install axios"
 }
